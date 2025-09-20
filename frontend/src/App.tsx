@@ -1,15 +1,20 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
 import { SlideNavigation } from './components/deck/SlideNavigation'
 import { DeckCanvas } from './components/deck/DeckCanvas'
 import { ChatSidebar } from './components/chat/ChatSidebar'
+import { Landing } from './pages/Landing'
+import { Dashboard } from './pages/Dashboard'
+import { VoicePractice } from './pages/VoicePractice'
 import './App.css'
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/deck/create" replace />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/practice" element={<VoicePractice />} />
         <Route path="/deck/create" element={
           <Layout title="Create Pitch Deck">
             <div className="h-full flex flex-col">
