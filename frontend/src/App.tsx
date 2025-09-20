@@ -12,7 +12,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/practice" element={<VoicePractice />} />
-        <Route path="/deck/create" element={<DeckCreation />} />
+        <Route path="/create" element={<DeckCreation />} />
       </Routes>
     </Router>
   )

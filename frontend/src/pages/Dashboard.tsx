@@ -22,7 +22,7 @@ export function Dashboard() {
         {/* Action Buttons */}
         <div className="flex space-x-4 mb-8">
           <button
-            onClick={() => navigate('/deck/create')}
+            onClick={() => navigate('/create')}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-md"
           >
             Create New Deck
@@ -41,7 +41,7 @@ export function Dashboard() {
             <div
               key={deck.id}
               className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => navigate('/deck/create')}
+              onClick={() => navigate('/create')}
             >
               <div className="h-32 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg mb-4 flex items-center justify-center">
                 <svg className="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
