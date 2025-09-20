@@ -35,3 +35,10 @@ Better-Auth (OAuth/social login)
 ## Hackathon Overview
 Link: https://www.convex.dev/hackathons/modernstack
 Modern Stack Hackathon by Convex + Firecrawl + Vapi + Better-Auth + Autumn + Resend + OpenAI.
+
+
+## App Flow and Pages/Structure
+1. Welcome page that display what the app is about and allows the user to login
+2. Then an overview page that shows the user all the pitch decks created as well as options to make a pitch deck and practice pitch 
+3. The pitch deck creation page with slides and chat that allows the user to make pitch dekh with chatting with ai
+4. The practice pitch which allows the user to practice the pitch based on the pitch dekh created
