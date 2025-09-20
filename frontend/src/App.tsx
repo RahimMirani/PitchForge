@@ -8,19 +8,23 @@ import './App.css'
 function DeckCreation() {
   return (
     <Layout title="Create Pitch Deck">
-      <div className="h-[calc(100vh-73px)] flex flex-col">
+      <div className="h-[calc(100vh-65px)] flex flex-col bg-gray-50">
         {/* Slide Navigation - Top */}
-        <SlideNavigation />
+        <div className="bg-white border-b border-gray-200 shadow-sm">
+          <SlideNavigation />
+        </div>
         
         {/* Main Content Area - Bottom */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Deck Canvas - Left */}
-          <div className="flex-1 p-6 flex">
+        <div className="flex flex-1 min-h-0">
+          {/* Deck Canvas - Left (takes most space) */}
+          <div className="flex-1 p-8 bg-gray-50">
             <DeckCanvas />
           </div>
           
-          {/* Chat Sidebar - Right */}
-          <ChatSidebar />
+          {/* Chat Sidebar - Right (fixed width) */}
+          <div className="w-96 bg-white border-l border-gray-200 shadow-lg">
+            <ChatSidebar />
+          </div>
         </div>
       </div>
     </Layout>
