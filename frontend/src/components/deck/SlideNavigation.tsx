@@ -13,8 +13,19 @@ export function SlideNavigation({ slides = [] }: SlideNavigationProps) {
   return (
     <div className="px-6 py-3">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-sm font-medium text-gray-700">Slides</h2>
-        <span className="text-xs text-gray-500">{mockSlides.length} slides</span>
+        <div className="flex items-center space-x-4">
+          <h2 className="text-sm font-medium text-gray-700">Slides</h2>
+          <span className="text-xs text-gray-500">{mockSlides.length} slides</span>
+        </div>
+        
+        <div className="flex items-center space-x-4">
+          <button className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            Export
+          </button>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+            Save Deck
+          </button>
+        </div>
       </div>
       
       <div className="flex items-center space-x-2 overflow-x-auto pb-1">
