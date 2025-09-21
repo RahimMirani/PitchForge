@@ -9,7 +9,7 @@
   --color-primary: #FFFFFF;
   --color-secondary: #F8F9FA;
   --color-tertiary: #E9ECEF;
-  --color-accent: #3B82F6;
+  --color-accent: #000000;
   --color-text-primary: #1F2937;
   --color-text-secondary: #6B7280;
   --color-border: #E5E7EB;
@@ -62,7 +62,7 @@ a {
 }
 
 a:hover {
-  color: #2563EB;
+  color: #000000;
 }
 
 /* Buttons - Remove all default focus styles */
