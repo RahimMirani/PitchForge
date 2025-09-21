@@ -19,10 +19,10 @@ export function SlideNavigation({ slides = [] }: SlideNavigationProps) {
         </div>
         
         <div className="flex items-center space-x-4">
-          <button className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+          <button className="text-sm text-gray-600 hover:text-gray-900 focus:outline-none active:text-gray-700 transition-colors">
             Export
           </button>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+          <button className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 focus:outline-none active:bg-gray-900 active:scale-95 transition-all duration-150">
             Save Deck
           </button>
         </div>
@@ -34,7 +34,7 @@ export function SlideNavigation({ slides = [] }: SlideNavigationProps) {
             <button
               key={slide.id}
               className={`
-                group relative flex flex-col items-center p-2 rounded-lg transition-all duration-200 min-w-[100px]
+                group relative flex flex-col items-center p-2 rounded-lg transition-all duration-200 min-w-[100px] focus:outline-none active:scale-95
                 ${slide.isActive 
                   ? 'bg-blue-50 border border-blue-200 shadow-sm' 
                   : 'bg-gray-50 border border-gray-100 hover:border-gray-200 hover:shadow-md hover:bg-white'
@@ -59,7 +59,7 @@ export function SlideNavigation({ slides = [] }: SlideNavigationProps) {
             </button>
           ))}
           
-          <button className="group flex flex-col items-center p-2 rounded-lg border border-dashed border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 min-w-[100px]">
+          <button className="group flex flex-col items-center p-2 rounded-lg border border-dashed border-gray-200 hover:border-blue-300 hover:bg-blue-50 focus:outline-none active:scale-95 transition-all duration-200 min-w-[100px]">
             <div className="w-12 h-8 rounded-md mb-1 flex items-center justify-center bg-gray-50 group-hover:bg-blue-100 transition-colors">
               <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

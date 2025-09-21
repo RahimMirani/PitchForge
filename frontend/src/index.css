@@ -65,7 +65,7 @@ a:hover {
   color: #2563EB;
 }
 
-/* Buttons */
+/* Buttons - Remove all default focus styles */
 button {
   border-radius: 8px;
   border: 1px solid var(--color-border);
@@ -85,14 +85,17 @@ button:hover {
   box-shadow: 0 4px 12px var(--color-shadow);
 }
 
+/* Remove all default focus outlines */
 button:focus,
-button:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+button:focus-visible,
+input:focus,
+input:focus-visible,
+*:focus,
+*:focus-visible {
+  outline: none !important;
 }
 
-/* Focus styles for accessibility */
-:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+/* Remove browser default focus for all elements */
+* {
+  outline: none !important;
 }

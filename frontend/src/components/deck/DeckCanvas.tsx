@@ -33,7 +33,7 @@ export function DeckCanvas() {
           <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-md mx-auto">
             Start by asking the AI assistant to help you create compelling content for your pitch deck.
           </p>
-          <button className="bg-black/80 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-semibold hover:bg-black/90 active:bg-black/95 focus:outline-none focus:ring-2 focus:ring-gray-500/50 transition-all duration-200 shadow-lg hover:shadow-2xl transform hover:-translate-y-0.5 active:translate-y-0 border border-white/10">
+          <button className="bg-black/80 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-semibold hover:bg-black/90 active:bg-black/95 focus:outline-none active:scale-95 transition-all duration-150 shadow-lg hover:shadow-2xl border border-white/10">
             Get Started
           </button>
         </div>

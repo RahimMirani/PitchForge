@@ -31,7 +31,7 @@ export function ChatSidebar() {
             <p className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Quick Actions</p>
           </div>
           
-          <button className="w-full text-left p-4 rounded-xl border border-gray-200/80 hover:border-slate-300 hover:bg-slate-50 transition-all duration-300 group shadow-sm hover:shadow-md">
+          <button className="w-full text-left p-4 rounded-xl border border-gray-200/80 hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:border-slate-300 focus:bg-slate-50 active:bg-slate-100 transition-all duration-200 group shadow-sm hover:shadow-md">
             <div className="flex items-start space-x-3">
               <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-slate-200 transition-colors">
                 <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,7 +45,7 @@ export function ChatSidebar() {
             </div>
           </button>
           
-          <button className="w-full text-left p-4 rounded-xl border border-gray-200/80 hover:border-slate-300 hover:bg-slate-50 transition-all duration-300 group shadow-sm hover:shadow-md">
+          <button className="w-full text-left p-4 rounded-xl border border-gray-200/80 hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:border-slate-300 focus:bg-slate-50 active:bg-slate-100 transition-all duration-200 group shadow-sm hover:shadow-md">
             <div className="flex items-start space-x-3">
               <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center group-hover:bg-amber-200 transition-colors">
                 <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,9 +67,9 @@ export function ChatSidebar() {
           <input
             type="text"
             placeholder="Describe your startup idea..."
-            className="flex-1 px-4 py-3 bg-white border border-gray-200/80 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-500/30 focus:border-slate-300 shadow-sm transition-all duration-200"
+            className="flex-1 px-4 py-3 bg-white border border-gray-200/80 rounded-xl text-sm focus:outline-none focus:border-slate-300 focus:ring-0 shadow-sm transition-all duration-200"
           />
-          <button className="px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-xl font-semibold hover:from-slate-700 hover:to-slate-800 active:from-slate-800 active:to-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-500/50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0">
+          <button className="px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-xl font-semibold hover:from-slate-700 hover:to-slate-800 active:from-slate-800 active:to-slate-900 focus:outline-none active:scale-95 transition-all duration-150 shadow-lg">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
