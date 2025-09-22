@@ -12,7 +12,9 @@ export default defineSchema({
   // Slides table - stores individual slide content
   slides: defineTable({
     deckId: v.id("decks"),           // Foreign key to decks table
-    type: v.union(                  // Enum-like field
+    title: v.string(),               // User-defined slide title
+    content: v.string(),             // Slide content
+    type: v.optional(v.union(        // Optional predefined category
       v.literal("title"),
       v.literal("problem"), 
       v.literal("solution"),
@@ -23,9 +25,9 @@ export default defineSchema({
       v.literal("traction"),
       v.literal("team"),
       v.literal("roadmap"),
-      v.literal("ask")
-    ),
-    content: v.string(),
+      v.literal("ask"),
+      v.literal("custom")
+    )),
     order: v.number(),              // Position in the deck
     createdAt: v.number(),
   }).index("by_deck", ["deckId"]),  // Index for fast queries by deckId

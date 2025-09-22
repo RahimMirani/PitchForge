@@ -8,7 +8,9 @@ import { v } from "convex/values";
 export const createSlide = mutation({
   args: {
     deckId: v.id("decks"),
-    type: v.union(
+    title: v.string(),                    // Custom title like "Market Analysis"
+    content: v.optional(v.string()),      // Content can be empty initially
+    type: v.optional(v.union(             // Optional predefined category
       v.literal("title"),
       v.literal("problem"), 
       v.literal("solution"),
@@ -19,9 +21,9 @@ export const createSlide = mutation({
       v.literal("traction"),
       v.literal("team"),
       v.literal("roadmap"),
-      v.literal("ask")
-    ),
-    content: v.string(),
+      v.literal("ask"),
+      v.literal("custom")                 // For completely custom slides
+    )),
   },
   handler: async (ctx, args) => {
     // Get the current number of slides in this deck to set order
@@ -32,9 +34,10 @@ export const createSlide = mutation({
     
     const slideId = await ctx.db.insert("slides", {
       deckId: args.deckId,
-      type: args.type,
-      content: args.content,
-      order: existingSlides.length + 1, // Add to end
+      title: args.title,                  // User-defined title
+      content: args.content || "",        // Can be empty initially
+      type: args.type || "custom",        // Default to custom if not specified
+      order: existingSlides.length + 1,
       createdAt: Date.now(),
     });
     
