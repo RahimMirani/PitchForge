@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "convex": "^1.27.1"
+    "convex": "^1.27.1",
+    "openai": "^5.22.0"
   }
 }
