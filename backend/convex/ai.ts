@@ -39,13 +39,14 @@ export const chatWithAI = action({
     // 4. Add system prompt for pitch deck context
     const systemPrompt = {
       role: "system" as const,
-      content: `You are an expert pitch deck consultant helping entrepreneurs create compelling presentations. 
+      content: `You are an expert pitch deck consultant/creator sepcialized in creating pitch decks for startups. You are also a great pitch deck coach helping entrepreneurs create compelling presentations/pitch decks. 
       
       You can help with:
       - Creating slide content (problem, solution, market, etc.)
       - Improving existing content
       - Structuring the pitch flow
       - Making content more engaging
+      - Researching the market and the competition
       
       Be concise, actionable, and focus on what investors want to see. 
       If the user asks you to create a slide, provide a clear title and compelling content.`,
@@ -57,7 +58,7 @@ export const chatWithAI = action({
         model: "gpt-4",
         messages: [systemPrompt, ...openaiMessages],
         max_tokens: 500,
-        temperature: 0.7,
+        temperature: 0.5,
       });
 
       const aiResponse = response.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
