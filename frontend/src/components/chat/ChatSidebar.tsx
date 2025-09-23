@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useQuery, useAction, useMutation } from 'convex/react';
 
 interface ChatSidebarProps {
   deckId: string | null;
@@ -16,6 +17,75 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
 
+  // Manual API calls to your Convex backend
+  const makeApiCall = async (functionName: string, args: any) => {
+    try {
+      const response = await fetch(`https://fastidious-mosquito-435.convex.cloud/api/query`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          path: functionName,
+          args: args,
+        }),
+      })
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`API call failed: ${response.status} ${response.statusText} - ${errorText}`)
+      }
+      
+      const result = await response.json()
+      return result.value || result
+    } catch (error) {
+      console.error(`API call to ${functionName} failed:`, error)
+      throw error
+    }
+  }
+
+  const makeActionCall = async (functionName: string, args: any) => {
+    try {
+      const response = await fetch(`https://fastidious-mosquito-435.convex.cloud/api/action`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          path: functionName,
+          args: args,
+        }),
+      })
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Action call failed: ${response.status} ${response.statusText} - ${errorText}`)
+      }
+      
+      const result = await response.json()
+      return result.value || result
+    } catch (error) {
+      console.error(`Action call to ${functionName} failed:`, error)
+      throw error
+    }
+  }
+
+  // Load messages when deckId changes
+  useEffect(() => {
+    const loadMessages = async () => {
+      if (!deckId) return;
+      
+      try {
+        const result = await makeApiCall('messages:getMessages', { deckId });
+        setMessages(result);
+      } catch (error) {
+        console.error('Failed to load messages:', error);
+      }
+    };
+    
+    loadMessages();
+  }, [deckId]);
+
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !deckId || isLoading) return;
     
@@ -23,9 +93,9 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
     setInputMessage(''); // Clear input immediately
     setIsLoading(true);
     
-    // Add user message immediately
+    // Add user message immediately for better UX
     const userMessage: Message = {
-      _id: Date.now().toString(),
+      _id: `temp-${Date.now()}`,
       role: 'user',
       content: messageToSend,
       timestamp: Date.now(),
@@ -33,24 +103,31 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
     setMessages(prev => [...prev, userMessage]);
     
     try {
-      // TODO: Replace with actual Convex API call when types are fixed
-      // await chatWithAI({ deckId, userMessage: messageToSend });
+      // Call the AI chat function (this is an action)
+      const result = await makeActionCall('ai:chatWithAI', {
+        deckId,
+        userMessage: messageToSend,
+      });
       
-      // Simulate AI response for now
-      setTimeout(() => {
-        const aiMessage: Message = {
-          _id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: `I'd be happy to help you with "${messageToSend}". This is a placeholder response while we're connecting the backend. The actual AI integration will provide detailed pitch deck assistance.`,
-          timestamp: Date.now(),
-        };
-        setMessages(prev => [...prev, aiMessage]);
-        setIsLoading(false);
-      }, 2000);
+      // Reload messages to get the actual conversation (this is a query)
+      const updatedMessages = await makeApiCall('messages:getMessages', { deckId });
+      setMessages(updatedMessages);
       
     } catch (error) {
       console.error('Failed to send message:', error);
+      // Remove the optimistic message and restore input
+      setMessages(prev => prev.filter(msg => msg._id !== userMessage._id));
       setInputMessage(messageToSend);
+      
+      // Show error message
+      const errorMessage: Message = {
+        _id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again.',
+        timestamp: Date.now(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -65,7 +142,7 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
   const handleQuickAction = async (message: string) => {
     if (!deckId || isLoading) return;
     
-    // Temporarily set the input and trigger send
+    // Set the input and trigger send
     setInputMessage(message);
     setTimeout(() => handleSendMessage(), 100);
   };
@@ -83,7 +160,7 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
           <div>
             <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
             <p className="text-sm text-slate-600 font-medium">
-              {isLoading ? 'Thinking...' : 'Online (Demo Mode)'}
+              {isLoading ? 'Thinking...' : 'Online'}
             </p>
           </div>
         </div>
@@ -112,9 +189,6 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
           <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-2xl p-5 border border-gray-200/60 shadow-sm">
             <p className="text-gray-800 leading-relaxed">
               👋 Hi! I'm here to help you create an amazing pitch deck. What's your startup idea?
-            </p>
-            <p className="text-gray-600 text-sm mt-2">
-              <strong>Note:</strong> Currently in demo mode. Full AI integration coming next!
             </p>
           </div>
         )}
