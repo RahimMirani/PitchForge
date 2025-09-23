@@ -1,21 +1,95 @@
+import { useState, useEffect } from 'react';
+
 interface SlideNavigationProps {
-  slides?: Array<{ id: string; title: string; isActive?: boolean }>;
+  deckId?: string | null;
 }
 
-export function SlideNavigation({ slides = [] }: SlideNavigationProps) {
-  // Mock data for now
-  const mockSlides = slides.length > 0 ? slides : [
-    { id: '1', title: 'Title Slide', isActive: true },
-    { id: '2', title: 'Problem', isActive: false },
-    { id: '3', title: 'Solution', isActive: false },
-  ];
+interface Slide {
+  _id: string;
+  title: string;
+  content: string;
+  order: number;
+}
+
+export function SlideNavigation({ deckId }: SlideNavigationProps) {
+  const [slides, setSlides] = useState<Slide[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+
+  // API call function
+  const makeApiCall = async (functionName: string, args: any) => {
+    try {
+      const response = await fetch(`https://fastidious-mosquito-435.convex.cloud/api/query`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          path: functionName,
+          args: args,
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API call failed: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+      
+      const result = await response.json();
+      return result.value || result;
+    } catch (error) {
+      console.error(`API call to ${functionName} failed:`, error);
+      throw error;
+    }
+  };
+
+  // Load slides when deckId changes
+  useEffect(() => {
+    const loadSlides = async () => {
+      if (!deckId) {
+        setSlides([]);
+        return;
+      }
+      
+      setIsLoading(true);
+      try {
+        const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
+        setSlides(result || []);
+      } catch (error) {
+        console.error('Failed to load slides:', error);
+        setSlides([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadSlides();
+  }, [deckId]);
+
+  // Auto-refresh slides every 2 seconds when deck is active (for real-time updates)
+  useEffect(() => {
+    if (!deckId) return;
+    
+    const interval = setInterval(async () => {
+      try {
+        const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
+        setSlides(result || []);
+      } catch (error) {
+        // Silently fail for background updates
+      }
+    }, 2000);
+    
+    return () => clearInterval(interval);
+  }, [deckId]);
 
   return (
     <div className="px-6 py-3">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center space-x-4">
           <h2 className="text-sm font-medium text-gray-700">Slides</h2>
-          <span className="text-xs text-gray-500">{mockSlides.length} slides</span>
+          <span className="text-xs text-gray-500">
+            {isLoading ? 'Loading...' : `${slides.length} slides`}
+          </span>
         </div>
         
         <div className="flex items-center space-x-4">
@@ -30,42 +104,51 @@ export function SlideNavigation({ slides = [] }: SlideNavigationProps) {
       
       <div className="flex items-center space-x-2 overflow-x-auto pb-1">
         <div className="flex space-x-2 min-w-max">
-          {mockSlides.map((slide, index) => (
-            <button
-              key={slide.id}
-              className={`
-                group relative flex flex-col items-center p-2 rounded-lg transition-all duration-200 min-w-[100px] focus:outline-none active:scale-95
-                ${slide.isActive 
-                  ? 'bg-blue-50 border border-blue-200 shadow-sm' 
-                  : 'bg-gray-50 border border-gray-100 hover:border-gray-200 hover:shadow-md hover:bg-white'
-                }
-              `}
-            >
-              <div className={`
-                w-12 h-8 rounded-md mb-1 flex items-center justify-center text-xs font-semibold
-                ${slide.isActive 
-                  ? 'bg-blue-100 text-blue-700' 
-                  : 'bg-white text-gray-500 group-hover:bg-gray-100'
-                }
-              `}>
-                {index + 1}
+          {slides.length > 0 ? (
+            slides.map((slide, index) => (
+              <button
+                key={slide._id}
+                onClick={() => setActiveSlideIndex(index)}
+                className={`
+                  group relative flex flex-col items-center p-2 rounded-lg transition-all duration-200 min-w-[100px] focus:outline-none active:scale-95
+                  ${index === activeSlideIndex
+                    ? 'bg-black/5 border border-black/20 shadow-sm' 
+                    : 'bg-gray-50 border border-gray-100 hover:border-black/20 hover:shadow-md hover:bg-white'
+                  }
+                `}
+              >
+                <div className={`
+                  w-12 h-8 rounded-md mb-1 flex items-center justify-center text-xs font-semibold
+                  ${index === activeSlideIndex
+                    ? 'bg-black text-white' 
+                    : 'bg-white text-gray-500 group-hover:bg-gray-100'
+                  }
+                `}>
+                  {index + 1}
+                </div>
+                <span className={`
+                  text-xs font-medium text-center truncate w-full
+                  ${index === activeSlideIndex ? 'text-black' : 'text-gray-600'}
+                `}>
+                  {slide.title}
+                </span>
+              </button>
+            ))
+          ) : (
+            !isLoading && (
+              <div className="flex items-center justify-center min-w-[200px] py-4 text-gray-500 text-sm">
+                No slides yet. Ask AI to create one!
               </div>
-              <span className={`
-                text-xs font-medium text-center truncate w-full
-                ${slide.isActive ? 'text-blue-900' : 'text-gray-600'}
-              `}>
-                {slide.title}
-              </span>
-            </button>
-          ))}
+            )
+          )}
           
-          <button className="group flex flex-col items-center p-2 rounded-lg border border-dashed border-gray-200 hover:border-blue-300 hover:bg-blue-50 focus:outline-none active:scale-95 transition-all duration-200 min-w-[100px]">
-            <div className="w-12 h-8 rounded-md mb-1 flex items-center justify-center bg-gray-50 group-hover:bg-blue-100 transition-colors">
-              <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button className="group flex flex-col items-center p-2 rounded-lg border border-dashed border-gray-200 hover:border-black/30 hover:bg-black/5 focus:outline-none active:scale-95 transition-all duration-200 min-w-[100px]">
+            <div className="w-12 h-8 rounded-md mb-1 flex items-center justify-center bg-gray-50 group-hover:bg-black/10 transition-colors">
+              <svg className="w-4 h-4 text-gray-400 group-hover:text-black/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
             </div>
-            <span className="text-xs font-medium text-gray-500 group-hover:text-blue-600">Add Slide</span>
+            <span className="text-xs font-medium text-gray-500 group-hover:text-black/70">Add Slide</span>
           </button>
         </div>
       </div>

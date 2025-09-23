@@ -80,7 +80,7 @@ export function DeckCreation() {
         <div className="flex flex-col flex-1 min-h-0">
           {/* Slide Navigation - Top */}
           <div className="bg-white border-b border-gray-200 shadow-sm">
-            <SlideNavigation />
+            <SlideNavigation deckId={currentDeckId} />
           </div>
           
           {/* Deck Canvas - Bottom */}
