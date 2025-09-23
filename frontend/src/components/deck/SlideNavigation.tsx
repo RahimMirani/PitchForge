@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 
 interface SlideNavigationProps {
   deckId?: string | null;
+  activeSlideIndex?: number;
+  onSlideSelect?: (index: number) => void;
 }
 
 interface Slide {
@@ -11,10 +13,9 @@ interface Slide {
   order: number;
 }
 
-export function SlideNavigation({ deckId }: SlideNavigationProps) {
+export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }: SlideNavigationProps) {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
   // API call function
   const makeApiCall = async (functionName: string, args: any) => {
@@ -108,7 +109,7 @@ export function SlideNavigation({ deckId }: SlideNavigationProps) {
             slides.map((slide, index) => (
               <button
                 key={slide._id}
-                onClick={() => setActiveSlideIndex(index)}
+                onClick={() => onSlideSelect?.(index)}
                 className={`
                   group relative flex flex-col items-center p-2 rounded-lg transition-all duration-200 min-w-[100px] focus:outline-none active:scale-95
                   ${index === activeSlideIndex

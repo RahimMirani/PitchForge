@@ -8,6 +8,7 @@ export function DeckCreation() {
   const [currentDeckId, setCurrentDeckId] = useState<string | null>(null)
   const [isCreatingDeck, setIsCreatingDeck] = useState(false)
   const [deckTitle, setDeckTitle] = useState('')
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0)
 
   // Create a new deck
   const createNewDeck = async () => {
@@ -80,12 +81,19 @@ export function DeckCreation() {
         <div className="flex flex-col flex-1 min-h-0">
           {/* Slide Navigation - Top */}
           <div className="bg-white border-b border-gray-200 shadow-sm">
-            <SlideNavigation deckId={currentDeckId} />
+            <SlideNavigation 
+              deckId={currentDeckId} 
+              activeSlideIndex={activeSlideIndex}
+              onSlideSelect={setActiveSlideIndex}
+            />
           </div>
           
           {/* Deck Canvas - Bottom */}
           <div className="flex-1 p-8">
-            <DeckCanvas />
+            <DeckCanvas 
+              deckId={currentDeckId} 
+              activeSlideIndex={activeSlideIndex}
+            />
           </div>
         </div>
         
