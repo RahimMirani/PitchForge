@@ -56,6 +56,12 @@ IMPORTANT: You can create slides automatically! When the user asks you to create
 For slide creation requests, start your response with:
 SLIDE_CREATE: {"title": "Slide Title Here", "content": "Detailed slide content here"}
 
+You have access to the following functions to create slides and other actions related to slides:
+- api.slides.createSlide
+- api.slides.deleteSlide
+- api.slides.reorderSlides
+- api.slides.updateSlide
+
 Then continue with your normal conversational response explaining what you created.
 
 Examples:
