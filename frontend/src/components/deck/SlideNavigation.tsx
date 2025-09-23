@@ -16,6 +16,7 @@ interface Slide {
 export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }: SlideNavigationProps) {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCreatingSlide, setIsCreatingSlide] = useState(false);
 
   // API call function
   const makeApiCall = async (functionName: string, args: any) => {
@@ -40,6 +41,32 @@ export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }:
       return result.value || result;
     } catch (error) {
       console.error(`API call to ${functionName} failed:`, error);
+      throw error;
+    }
+  };
+
+  const makeMutationCall = async (functionName: string, args: any) => {
+    try {
+      const response = await fetch(`https://fastidious-mosquito-435.convex.cloud/api/mutation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          path: functionName,
+          args: args,
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Mutation call failed: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+      
+      const result = await response.json();
+      return result.value || result;
+    } catch (error) {
+      console.error(`Mutation call to ${functionName} failed:`, error);
       throw error;
     }
   };
@@ -82,6 +109,33 @@ export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }:
     
     return () => clearInterval(interval);
   }, [deckId]);
+
+  const createNewSlide = async () => {
+    if (!deckId || isCreatingSlide) return;
+    
+    setIsCreatingSlide(true);
+    try {
+      const slideId = await makeMutationCall('slides:createSlide', {
+        deckId: deckId,
+        title: `New Slide ${slides.length + 1}`,
+        content: 'Click edit to add content to this slide.',
+      });
+
+      // Refresh slides to show the new slide
+      const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
+      setSlides(result || []);
+      
+      // Select the new slide (it will be the last one)
+      const newSlideIndex = (result?.length || 1) - 1;
+      onSlideSelect?.(newSlideIndex);
+      
+    } catch (error) {
+      console.error('Failed to create slide:', error);
+      alert('Failed to create slide. Please try again.');
+    } finally {
+      setIsCreatingSlide(false);
+    }
+  };
 
   return (
     <div className="px-6 py-3">
@@ -143,13 +197,25 @@ export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }:
             )
           )}
           
-          <button className="group flex flex-col items-center p-2 rounded-lg border border-dashed border-gray-200 hover:border-black/30 hover:bg-black/5 focus:outline-none active:scale-95 transition-all duration-200 min-w-[100px]">
+          <button 
+            onClick={createNewSlide}
+            disabled={!deckId || isCreatingSlide}
+            className="group flex flex-col items-center p-2 rounded-lg border border-dashed border-gray-200 hover:border-black/30 hover:bg-black/5 focus:outline-none active:scale-95 transition-all duration-200 min-w-[100px] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <div className="w-12 h-8 rounded-md mb-1 flex items-center justify-center bg-gray-50 group-hover:bg-black/10 transition-colors">
-              <svg className="w-4 h-4 text-gray-400 group-hover:text-black/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
+              {isCreatingSlide ? (
+                <svg className="w-4 h-4 text-gray-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4 text-gray-400 group-hover:text-black/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              )}
             </div>
-            <span className="text-xs font-medium text-gray-500 group-hover:text-black/70">Add Slide</span>
+            <span className="text-xs font-medium text-gray-500 group-hover:text-black/70">
+              {isCreatingSlide ? 'Creating...' : 'Add Slide'}
+            </span>
           </button>
         </div>
       </div>
