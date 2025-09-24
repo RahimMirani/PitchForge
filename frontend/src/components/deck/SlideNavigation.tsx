@@ -4,6 +4,9 @@ interface SlideNavigationProps {
   deckId?: string | null;
   activeSlideIndex?: number;
   onSlideSelect?: (index: number) => void;
+  onAddSlide?: () => void;
+  compact?: boolean;
+  onSummaryChange?: (summary: { count: number; syncedAt: Date | null }) => void;
 }
 
 interface Slide {
@@ -14,11 +17,10 @@ interface Slide {
   createdAt?: number;
 }
 
-export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }: SlideNavigationProps) {
+export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect, onAddSlide, compact = false, onSummaryChange }: SlideNavigationProps) {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCreatingSlide, setIsCreatingSlide] = useState(false);
-  const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
 
   // API call function
   const makeApiCall = async (functionName: string, args: any) => {
@@ -78,44 +80,52 @@ export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }:
     const loadSlides = async () => {
       if (!deckId) {
         setSlides([]);
+        onSummaryChange?.({ count: 0, syncedAt: null });
         return;
       }
-      
+
       setIsLoading(true);
       try {
         const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
-        setSlides(result || []);
-        setLastSyncedAt(new Date());
+        const list = result || [];
+        setSlides(list);
+        const syncedAt = new Date();
+        onSummaryChange?.({ count: list.length, syncedAt });
       } catch (error) {
         console.error('Failed to load slides:', error);
         setSlides([]);
+        onSummaryChange?.({ count: 0, syncedAt: null });
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     loadSlides();
   }, [deckId]);
 
   // Auto-refresh slides every 2 seconds when deck is active (for real-time updates)
   useEffect(() => {
     if (!deckId) return;
-    
+
     const interval = setInterval(async () => {
       try {
         const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
-        setSlides(result || []);
-        setLastSyncedAt(new Date());
+        const list = result || [];
+        setSlides(list);
+        onSummaryChange?.({ count: list.length, syncedAt: new Date() });
       } catch (error) {
         // Silently fail for background updates
       }
     }, 2000);
-    
+
     return () => clearInterval(interval);
-  }, [deckId]);
+  }, [deckId, onSummaryChange]);
 
   const createNewSlide = async () => {
-    if (!deckId || isCreatingSlide) return;
+    if (!deckId || isCreatingSlide) {
+      onAddSlide?.();
+      return;
+    }
     
     setIsCreatingSlide(true);
     try {
@@ -127,8 +137,9 @@ export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }:
 
       // Refresh slides to show the new slide
       const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
-      setSlides(result || []);
-      setLastSyncedAt(new Date());
+      const list = result || [];
+      setSlides(list);
+      onSummaryChange?.({ count: list.length, syncedAt: new Date() });
       
       // Select the new slide (it will be the last one)
       const newSlideIndex = (result?.length || 1) - 1;
@@ -142,14 +153,6 @@ export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }:
     }
   };
 
-  const formatTime = (date: Date | null) => {
-    if (!date) return 'Syncing…';
-    return new Intl.DateTimeFormat('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-    }).format(date);
-  };
-
   const slideGradients = [
     'from-[rgba(97,81,255,0.12)] via-white to-white',
     'from-[rgba(63,209,201,0.12)] via-white to-white',
@@ -157,41 +160,22 @@ export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }:
     'from-[rgba(14,116,144,0.14)] via-white to-white',
   ];
 
+  const tileHeight = compact ? 'h-[96px]' : 'h-[110px]';
+  const tileWidth = compact ? 'w-[150px]' : 'w-[160px]';
+  const tilesPadding = compact ? 'px-3 py-3' : 'px-4 py-3';
+
   const renderSkeletons = () => (
-    Array.from({ length: 4 }).map((_, index) => (
+    Array.from({ length: 3 }).map((_, index) => (
       <div
         key={`skeleton-${index}`}
-        className="w-[140px] h-[98px] rounded-2xl bg-white/60 border border-[var(--border-subtle)] shadow-sm animate-pulse"
+        className={`${tileWidth} ${tileHeight} rounded-2xl bg-white/60 border border-[var(--border-subtle)] shadow-sm animate-pulse`}
       />
     ))
   );
 
   return (
-    <div className="px-8 py-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div>
-            <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-slate-500">Slides</p>
-            <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[rgba(97,81,255,0.12)] text-[var(--color-violet)] font-medium">
-                {isLoading ? 'Syncing…' : `${slides.length} total`}
-              </span>
-              <span>•</span>
-              <span>Last synced {formatTime(lastSyncedAt)}</span>
-            </div>
-          </div>
-        </div>
-        <div className="hidden md:flex items-center gap-2 text-xs text-slate-500">
-          <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/70 border border-[var(--border-subtle)]">
-            <svg className="w-3.5 h-3.5 text-[var(--color-aqua)] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-            </svg>
-            Ask AI to draft your next slide
-          </span>
-        </div>
-      </div>
-
-      <div className="mt-4 flex items-stretch gap-3 overflow-x-auto pb-2">
+    <div>
+      <div className={`flex items-stretch gap-3 overflow-x-auto ${compact ? 'pb-1 mt-3' : 'pb-2 mt-4'}`}>
         {isLoading ? (
           renderSkeletons()
         ) : slides.length > 0 ? (
@@ -203,7 +187,7 @@ export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }:
               <button
                 key={slide._id}
                 onClick={() => onSlideSelect?.(index)}
-                className={`group relative w-[160px] h-[110px] rounded-2xl border backdrop-blur-sm transition-all duration-200 text-left px-4 py-3 flex flex-col justify-between focus:outline-none ${
+                className={`group relative ${tileWidth} ${tileHeight} rounded-2xl border backdrop-blur-sm transition-all duration-200 text-left ${tilesPadding} flex flex-col justify-between focus:outline-none ${
                   isActive
                     ? 'border-[rgba(97,81,255,0.45)] bg-white shadow-[0_18px_45px_rgba(15,23,42,0.18)]'
                     : 'border-[var(--border-subtle)] bg-white/70 hover:border-[rgba(63,209,201,0.45)] hover:shadow-[0_18px_45px_rgba(15,23,42,0.12)]'
@@ -240,9 +224,15 @@ export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }:
         )}
 
         <button
-          onClick={createNewSlide}
+          onClick={() => {
+            if (deckId) {
+              createNewSlide();
+            } else {
+              onAddSlide?.();
+            }
+          }}
           disabled={!deckId || isCreatingSlide}
-          className="shrink-0 w-[160px] h-[110px] rounded-2xl border border-dashed border-[rgba(97,81,255,0.35)] bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center text-center px-4 py-3 text-sm font-medium text-[var(--color-violet)] hover:border-[rgba(63,209,201,0.45)] hover:text-[var(--color-aqua)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className={`shrink-0 ${tileWidth} ${tileHeight} rounded-2xl border border-dashed border-[rgba(97,81,255,0.35)] bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center text-center ${tilesPadding} text-sm font-medium text-[var(--color-violet)] hover:border-[rgba(63,209,201,0.45)] hover:text-[var(--color-aqua)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[rgba(97,81,255,0.12)] mb-2">
             {isCreatingSlide ? (
