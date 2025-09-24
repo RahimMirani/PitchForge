@@ -157,9 +157,9 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
     'from-[rgba(14,116,144,0.14)] via-white to-white',
   ];
 
-  const tileHeight = 'h-[96px]';
-  const tileWidth = 'w-[150px]';
-  const tilesPadding = 'px-3.5 py-3';
+  const tileHeight = 'h-[108px]';
+  const tileWidth = 'w-[170px]';
+  const tilesPadding = 'px-4 py-3';
 
   const renderSkeletons = () => (
     Array.from({ length: 3 }).map((_, index) => (
@@ -220,8 +220,8 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
 
   return (
     <div className="bg-white/85 backdrop-blur-xl border border-[var(--border-subtle)] rounded-2xl shadow-[0_18px_38px_rgba(11,18,32,0.08)] px-5 py-3">
-      <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 pr-4 border-r border-[var(--border-subtle)]/60 space-y-1">
+      <div className="flex items-start gap-5">
+        <div className="flex-shrink-0 pr-6 border-r border-[var(--border-subtle)]/60 space-y-1.5">
           <h1 className="text-lg font-semibold text-slate-900 leading-tight">
             {deckTitle}
           </h1>
@@ -232,7 +232,7 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
         </div>
 
         <div className="flex-1 overflow-hidden">
-          <div className="flex items-stretch gap-2 overflow-x-auto pr-2">
+          <div className="flex items-stretch gap-3 overflow-x-auto overflow-y-hidden flex-nowrap pr-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[rgba(15,23,42,0.12)] hover:scrollbar-thumb-[rgba(15,23,42,0.2)]">
             {slideTiles}
             <button
               onClick={createNewSlide}
