@@ -140,20 +140,11 @@ export function SlideNavigation({ deckId, activeSlideIndex = 0, onSlideSelect }:
   return (
     <div className="px-6 py-3">
       <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center space-x-4">
-          <h2 className="text-sm font-medium text-gray-700">Slides</h2>
-          <span className="text-xs text-gray-500">
-            {isLoading ? 'Loading...' : `${slides.length} slides`}
+        <div className="flex items-center space-x-3">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Slides</h2>
+          <span className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-[rgba(97,81,255,0.12)] text-[var(--color-violet)]">
+            {isLoading ? 'Loading…' : `${slides.length} total`}
           </span>
-        </div>
-        
-        <div className="flex items-center space-x-4">
-          <button className="text-sm text-gray-600 hover:text-gray-900 focus:outline-none active:text-gray-700 transition-colors">
-            Export
-          </button>
-          <button className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 focus:outline-none active:bg-gray-900 active:scale-95 transition-all duration-150">
-            Save Deck
-          </button>
         </div>
       </div>
       

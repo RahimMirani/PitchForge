@@ -74,9 +74,9 @@ export function DeckCreation() {
     )
   }
 
-  const header = (
-    <div className="border-b border-[var(--border-subtle)]/70 backdrop-blur-xl bg-white/70">
-      <div className="max-w-[1400px] mx-auto px-8 py-5 flex items-center justify-between">
+  const workspaceHeader = (
+    <div className="border-b border-[var(--border-subtle)]/70 backdrop-blur-xl bg-white/70 shadow-[0_12px_34px_rgba(11,18,32,0.05)]">
+      <div className="px-10 py-5 flex items-center justify-between">
         <div>
           <div className="flex items-center space-x-3">
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Workspace</span>
@@ -100,30 +100,31 @@ export function DeckCreation() {
   )
 
   return (
-    <Layout header={header} backgroundVariant="aurora">
+    <Layout backgroundVariant="aurora">
       <div className="h-full flex">
-        {/* Main Content Area - Left */}
         <div className="flex flex-col flex-1 min-h-0">
-          {/* Slide Navigation - Top */}
-          <div className="bg-white border-b border-gray-200 shadow-sm">
-            <SlideNavigation 
-              deckId={currentDeckId} 
-              activeSlideIndex={activeSlideIndex}
-              onSlideSelect={setActiveSlideIndex}
-            />
-          </div>
-          
-          {/* Deck Canvas - Bottom */}
-          <div className="flex-1 p-8">
-            <DeckCanvas 
-              deckId={currentDeckId} 
-              activeSlideIndex={activeSlideIndex}
-            />
+          {workspaceHeader}
+          <div className="flex flex-col flex-1 min-h-0">
+            {/* Slide Navigation - Top */}
+            <div className="bg-white/80 backdrop-blur-xl border-b border-[var(--border-subtle)]">
+              <SlideNavigation 
+                deckId={currentDeckId} 
+                activeSlideIndex={activeSlideIndex}
+                onSlideSelect={setActiveSlideIndex}
+              />
+            </div>
+            {/* Deck Canvas - Bottom */}
+            <div className="flex-1 p-8">
+              <DeckCanvas 
+                deckId={currentDeckId} 
+                activeSlideIndex={activeSlideIndex}
+              />
+            </div>
           </div>
         </div>
-        
+        {/* Main Content Area - Left */}
         {/* Chat Sidebar - Right (Full Height) */}
-        <div className="w-96 bg-white border-l border-gray-200 shadow-lg">
+        <div className="w-[420px] bg-white/85 backdrop-blur-xl border-l border-[var(--border-subtle)] shadow-[0_20px_45px_rgba(11,18,32,0.08)]">
           <ChatSidebar deckId={currentDeckId} />
         </div>
       </div>
