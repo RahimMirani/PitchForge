@@ -157,7 +157,7 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
     'from-[rgba(14,116,144,0.14)] via-white to-white',
   ];
 
-  const tileHeight = 'h-[108px]';
+  const tileHeight = 'h-[110px]';
   const tileWidth = 'w-[170px]';
   const tilesPadding = 'px-4 py-3';
 
@@ -219,8 +219,8 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
       );
 
   return (
-    <div className="bg-white/85 backdrop-blur-xl border border-[var(--border-subtle)] rounded-2xl shadow-[0_18px_38px_rgba(11,18,32,0.08)] px-5 py-3">
-      <div className="flex items-start gap-5">
+    <div className="w-full overflow-hidden bg-white/85 backdrop-blur-xl border border-[var(--border-subtle)] rounded-2xl shadow-[0_18px_38px_rgba(11,18,32,0.08)] px-5 py-3 h-[164px]">
+      <div className="flex h-full items-stretch gap-5">
         <div className="flex-shrink-0 pr-6 border-r border-[var(--border-subtle)]/60 space-y-1.5">
           <h1 className="text-lg font-semibold text-slate-900 leading-tight">
             {deckTitle}
@@ -231,32 +231,34 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
           <span className="block text-[11px] text-slate-500">Synced {formattedSyncedAt}</span>
         </div>
 
-        <div className="flex-1 overflow-hidden">
-          <div className="flex items-stretch gap-3 overflow-x-auto overflow-y-hidden flex-nowrap pr-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-[rgba(15,23,42,0.12)] hover:scrollbar-thumb-[rgba(15,23,42,0.2)]">
-            {slideTiles}
-            <button
-              onClick={createNewSlide}
-              disabled={!deckId || isCreatingSlide}
-              className={`shrink-0 ${tileWidth} ${tileHeight} rounded-2xl border border-dashed border-[rgba(97,81,255,0.35)] bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center text-center ${tilesPadding} text-sm font-medium text-[var(--color-violet)] hover:border-[rgba(63,209,201,0.45)] hover:text-[var(--color-aqua)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[rgba(97,81,255,0.12)] mb-2">
-                {isCreatingSlide ? (
-                  <svg className="w-4 h-4 text-[var(--color-violet)] animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                ) : (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                )}
-              </div>
-              <span>{isCreatingSlide ? 'Composing…' : 'Compose slide'}</span>
-              <span className="text-[11px] text-slate-500 mt-1">Powered by AI</span>
-            </button>
+        <div className="flex-1 basis-0 overflow-hidden min-w-0">
+          <div className="h-full w-full overflow-x-auto overflow-y-hidden">
+            <div className="flex items-stretch gap-3 flex-nowrap min-w-max pr-2 pb-1 max-w-full">
+              {slideTiles}
+              <button
+                onClick={createNewSlide}
+                disabled={!deckId || isCreatingSlide}
+                className={`shrink-0 ${tileWidth} ${tileHeight} rounded-2xl border border-dashed border-[rgba(97,81,255,0.35)] bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center text-center ${tilesPadding} text-sm font-medium text-[var(--color-violet)] hover:border-[rgba(63,209,201,0.45)] hover:text-[var(--color-aqua)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[rgba(97,81,255,0.12)] mb-2">
+                  {isCreatingSlide ? (
+                    <svg className="w-4 h-4 text-[var(--color-violet)] animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                  )}
+                </div>
+                <span>{isCreatingSlide ? 'Composing…' : 'Compose slide'}</span>
+                <span className="text-[11px] text-slate-500 mt-1">Powered by AI</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="flex-shrink-0 flex flex-col items-stretch gap-2">
+        <div className="flex-shrink-0 flex flex-col items-stretch gap-2 justify-center">
           <button className="px-3 py-1.5 rounded-full border border-[var(--border-subtle)] bg-white text-[12px] font-medium text-slate-600 hover:text-slate-900 hover:border-[var(--border-strong)]">
             Export
           </button>
