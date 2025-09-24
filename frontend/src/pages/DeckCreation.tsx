@@ -9,9 +9,6 @@ export function DeckCreation() {
   const [isCreatingDeck, setIsCreatingDeck] = useState(false)
   const [deckTitle, setDeckTitle] = useState('')
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
-  const [slideCount, setSlideCount] = useState(0)
-  const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null)
-
   // Create a new deck
   const createNewDeck = async () => {
     if (!deckTitle.trim()) {
@@ -81,59 +78,16 @@ export function DeckCreation() {
       <div className="h-full flex">
         <div className="flex flex-col flex-1 min-h-0">
           <div className="flex flex-col flex-1 min-h-0">
-            <div className="px-10 pt-6">
-              <div className="bg-white/80 backdrop-blur-xl border border-[var(--border-subtle)] rounded-3xl shadow-[0_20px_45px_rgba(11,18,32,0.08)] px-6 py-4 space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500">Workspace</span>
-                      <span className="inline-flex items-center px-3 py-1 text-[11px] font-semibold rounded-full bg-[rgba(63,209,201,0.14)] text-[var(--color-aqua)]">
-                        Live Sync
-                      </span>
-                    </div>
-                    <h1 className="text-[22px] font-semibold text-slate-900 mt-1 tracking-tight">{deckTitle || 'Untitled Deck'}</h1>
-                    <p className="text-sm text-slate-500">Craft each slide with AI co-creation</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button className="px-4 py-1.5 rounded-full border border-[var(--border-subtle)] bg-white/90 text-slate-600 hover:text-slate-900 hover:border-[var(--border-strong)] text-sm">
-                      Export Deck
-                    </button>
-                    <button className="px-4 py-1.5 rounded-full bg-[var(--color-violet)] text-white text-sm shadow-[0_8px_20px_rgba(97,81,255,0.25)] hover:shadow-[0_12px_30px_rgba(97,81,255,0.32)]">
-                      Save Progress
-                    </button>
-                  </div>
-                </div>
+            <div className="px-8 pt-4">
+              <SlideNavigation 
+                deckId={currentDeckId} 
+                deckTitle={deckTitle || 'Untitled Deck'}
+                activeSlideIndex={activeSlideIndex}
+                onSlideSelect={setActiveSlideIndex}
+              />
+            </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
-                  <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[rgba(97,81,255,0.12)] text-[var(--color-violet)] font-medium">
-                      {`Total Slides: ${slideCount}`}
-                    </span>
-                    <span>•</span>
-                    <span>Last synced {lastSyncedAt ? new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: 'numeric' }).format(lastSyncedAt) : 'syncing…'}</span>
-                  </div>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/70 border border-[var(--border-subtle)]">
-                    <svg className="w-3.5 h-3.5 text-[var(--color-aqua)] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                    Ask AI to draft your next slide
-                  </span>
-                </div>
-
-            <SlideNavigation 
-              deckId={currentDeckId} 
-              activeSlideIndex={activeSlideIndex}
-              onSlideSelect={setActiveSlideIndex}
-                  compact
-                  onSummaryChange={({ count, syncedAt }) => {
-                    setSlideCount(count)
-                    setLastSyncedAt(syncedAt)
-                  }}
-            />
-              </div>
-          </div>
-          
-          <div className="flex-1 p-8">
+            <div className="flex-1 p-8 pt-6">
             <DeckCanvas 
               deckId={currentDeckId} 
               activeSlideIndex={activeSlideIndex}
