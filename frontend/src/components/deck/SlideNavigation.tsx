@@ -220,20 +220,15 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
 
   return (
     <div className="bg-white/85 backdrop-blur-xl border border-[var(--border-subtle)] rounded-2xl shadow-[0_18px_38px_rgba(11,18,32,0.08)] px-5 py-3">
-      <div className="flex items-center gap-4">
-        <div className="flex-shrink-0 pr-4 border-r border-[var(--border-subtle)]/60">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <h1 className="text-lg font-semibold text-slate-900 leading-tight">
-              {deckTitle}
-            </h1>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[rgba(63,209,201,0.16)] text-[11px] font-semibold text-[var(--color-aqua)] uppercase tracking-[0.14em]">
-              Live Sync
-            </span>
-            <span className="inline-flex items-center px-2 py-1 rounded-full bg-[rgba(97,81,255,0.12)] text-[11px] font-medium text-[var(--color-violet)]">
-              {slides.length} slides
-            </span>
-            <span className="text-[11px] text-slate-500">Synced {formattedSyncedAt}</span>
-          </div>
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0 pr-4 border-r border-[var(--border-subtle)]/60 space-y-1">
+          <h1 className="text-lg font-semibold text-slate-900 leading-tight">
+            {deckTitle}
+          </h1>
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[rgba(97,81,255,0.12)] text-[11px] font-medium text-[var(--color-violet)]">
+            {slides.length} slides
+          </span>
+          <span className="block text-[11px] text-slate-500">Synced {formattedSyncedAt}</span>
         </div>
 
         <div className="flex-1 overflow-hidden">
@@ -261,7 +256,7 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
           </div>
         </div>
 
-        <div className="flex-shrink-0 flex items-center gap-2">
+        <div className="flex-shrink-0 flex flex-col items-stretch gap-2">
           <button className="px-3 py-1.5 rounded-full border border-[var(--border-subtle)] bg-white text-[12px] font-medium text-slate-600 hover:text-slate-900 hover:border-[var(--border-strong)]">
             Export
           </button>
