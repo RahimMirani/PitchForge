@@ -4,19 +4,23 @@
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   line-height: 1.6;
   font-weight: 400;
-  
-  /* Premium Swiss Spa Palette */
-  --color-primary: #FFFFFF;
-  --color-secondary: #F8F9FA;
-  --color-tertiary: #E9ECEF;
-  --color-accent: #000000;
-  --color-text-primary: #1F2937;
-  --color-text-secondary: #6B7280;
-  --color-border: #E5E7EB;
-  --color-shadow: rgba(0, 0, 0, 0.04);
 
-  color: var(--color-text-primary);
-  background-color: var(--color-secondary);
+  /* Aurora-inspired palette */
+  --color-midnight: #0B1220;
+  --color-ink: #111827;
+  --color-violet: #6151FF;
+  --color-violet-soft: #7362FF;
+  --color-aqua: #3FD1C9;
+  --color-coral: #FF6F61;
+  --surface-page: #F5F6FA;
+  --surface-card: #FFFFFF;
+  --surface-muted: #ECEFF4;
+  --border-subtle: rgba(17, 24, 39, 0.08);
+  --border-strong: rgba(17, 24, 39, 0.16);
+  --surface-shadow: rgba(11, 18, 32, 0.08);
+
+  color: var(--color-ink);
+  background-color: var(--surface-page);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -43,7 +47,13 @@ html, body {
 
 body {
   min-width: 320px;
-  background-color: var(--color-secondary);
+  background-color: var(--surface-page);
+  background-image:
+    radial-gradient(60% 60% at 15% 10%, rgba(63, 209, 201, 0.18), transparent),
+    radial-gradient(50% 50% at 85% 0%, rgba(97, 81, 255, 0.22), transparent 60%),
+    radial-gradient(70% 70% at 50% 100%, rgba(11, 18, 32, 0.08), transparent 60%),
+    linear-gradient(180deg, #F5F6FA 0%, #E8ECF8 100%);
+  background-repeat: no-repeat;
 }
 
 /* Typography */
@@ -67,22 +77,23 @@ a:hover {
 
 /* Buttons - Remove all default focus styles */
 button {
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
-  padding: 0.75rem 1.5rem;
-  font-size: 0.875rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  padding: 0.7rem 1.6rem;
+  font-size: 0.9rem;
   font-weight: 500;
   font-family: inherit;
-  background-color: var(--color-primary);
-  color: var(--color-text-primary);
+  background-color: var(--surface-card);
+  color: var(--color-ink);
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 2px var(--color-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  box-shadow: 0 8px 20px rgba(11, 18, 32, 0.04);
 }
 
 button:hover {
-  border-color: var(--color-accent);
-  box-shadow: 0 4px 12px var(--color-shadow);
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(11, 18, 32, 0.08);
+  filter: brightness(1.02);
 }
 
 /* Remove all default focus outlines */
