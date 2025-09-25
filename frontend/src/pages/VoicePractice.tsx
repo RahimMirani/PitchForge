@@ -38,21 +38,37 @@ export function VoicePractice() {
           <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
             <div className="flex flex-col gap-4">
               <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Choose your mock VC</p>
-              <h2 className="text-2xl font-semibold text-white">Investor personas coming soon</h2>
-              <p className="text-sm text-slate-300">
-                We&rsquo;re building tailored mock VC profiles so you can spar with different questioning styles. Until then, you can run a freestyle practice session.
-              </p>
             </div>
 
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-white/15 bg-slate-950/50 p-10 text-center">
-              <span className="text-4xl">🎧</span>
-              <h3 className="text-lg font-semibold text-white">No personas available yet</h3>
-              <p className="max-w-sm text-sm text-slate-300">
-                Start a practice run without a specific investor, or check back soon for curated VC presets.
-              </p>
-              <button className="rounded-full bg-white px-6 py-2 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
-                Start freestyle session
-              </button>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+              {[
+                {
+                  tag: 'a16z',
+                  name: 'Andreessen Horowitz',
+                  focus: 'Breakout AI, consumer, and fintech founders.',
+                },
+                {
+                  tag: 'YC',
+                  name: 'Y Combinator',
+                  focus: 'Early-stage teams with fast iteration and sharp stories.',
+                },
+                {
+                  tag: 'Sequoia',
+                  name: 'Sequoia Capital',
+                  focus: 'Global scale businesses with durable moats.',
+                },
+                {
+                  tag: 'Lightspeed',
+                  name: 'Lightspeed Venture Partners',
+                  focus: 'Product-led growth, SaaS, marketplaces, and crypto.',
+                },
+              ].map((firm) => (
+                <div key={firm.tag} className="flex flex-col gap-3 rounded-xl border border-white/10 bg-slate-900/70 p-6">
+                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400">{firm.tag}</p>
+                  <h4 className="text-lg font-semibold text-white">{firm.name}</h4>
+                  <p className="text-sm text-slate-300">{firm.focus}</p>
+                </div>
+              ))}
             </div>
           </div>
 
