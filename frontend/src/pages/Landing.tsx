@@ -22,7 +22,7 @@ export function Landing() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100">
+    <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
       <div className="absolute inset-0">
         <div className="absolute -top-32 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-violet-500/30 blur-3xl" />
         <div className="absolute bottom-0 right-[-10%] h-[420px] w-[420px] rounded-full bg-cyan-400/20 blur-3xl" />
