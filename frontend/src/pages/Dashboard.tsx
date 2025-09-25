@@ -11,51 +11,114 @@ export function Dashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto p-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Pitch Decks</h1>
-          <p className="text-gray-600">Create and manage your startup presentations</p>
-        </div>
+    <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
+      <div className="absolute inset-0">
+        <div className="absolute -top-32 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-violet-500/20 blur-3xl" />
+        <div className="absolute bottom-[-20%] right-[-10%] h-[540px] w-[540px] rounded-full bg-indigo-500/10 blur-3xl" />
+        <div className="absolute top-1/3 left-[-15%] h-[340px] w-[340px] rounded-full bg-cyan-400/15 blur-3xl" />
+      </div>
 
-        {/* Action Buttons */}
-        <div className="flex space-x-4 mb-8">
-          <button
-            onClick={() => navigate('/create')}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-md"
-          >
-            Create New Deck
-          </button>
-          <button
-            onClick={() => navigate('/practice')}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-md"
-          >
-            Practice with Voice
-          </button>
-        </div>
+      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-12 px-6 py-12 sm:px-10">
+        <header className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.3em] text-slate-300">Welcome back</p>
+            <h1 className="mt-3 text-4xl font-semibold text-white">Your pitch HQ</h1>
+            <p className="mt-3 max-w-xl text-base text-slate-300">
+              Build, rehearse, and ship investor-ready decks in one place. Pick up where you left off or spin up something new.
+            </p>
+          </div>
 
-        {/* Deck Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockDecks.map((deck) => (
-            <div
-              key={deck.id}
-              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow cursor-pointer"
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <button
               onClick={() => navigate('/create')}
+              className="flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold tracking-wide text-slate-950 transition hover:bg-slate-100"
             >
-              <div className="h-32 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg mb-4 flex items-center justify-center">
-                <svg className="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{deck.title}</h3>
-              <div className="flex justify-between text-sm text-gray-500">
-                <span>{deck.slides} slides</span>
-                <span>{deck.createdAt}</span>
-              </div>
+              <span className="text-lg">➕</span>
+              Start a new pitch deck
+            </button>
+            <button
+              onClick={() => navigate('/practice')}
+              className="flex items-center justify-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold tracking-wide text-slate-100 transition hover:border-white/40 hover:bg-white/10"
+            >
+              <span className="text-lg">🎙️</span>
+              Practice with voice
+            </button>
+          </div>
+        </header>
+
+        <section className="grid gap-6 lg:grid-cols-2">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-white/90">Recent decks</h2>
+              <button className="text-sm text-slate-300 transition hover:text-white" onClick={() => navigate('/create')}>
+                View all
+              </button>
             </div>
-          ))}
-        </div>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {mockDecks.map((deck) => (
+                <button
+                  key={deck.id}
+                  onClick={() => navigate('/create')}
+                  className="group flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/60 p-5 text-left transition hover:border-white/30 hover:bg-slate-900/80"
+                >
+                  <div className="relative w-full overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-white/15 via-white/5 to-white/0">
+                    <div className="aspect-square">
+                      <div className="flex h-full w-full flex-col justify-between p-5">
+                        <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-300/80">
+                          <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                          Live sync
+                        </div>
+                        <div className="space-y-2 text-xs text-slate-200/90">
+                          <div className="font-semibold text-white">Problem → Solution</div>
+                          <p className="text-slate-300">
+                            Founders lose 20% of their week building decks. PitchForge automates research, copy, and visuals.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex w-full items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-400">
+                    <span>Pitch deck</span>
+                    <span>{deck.createdAt}</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-white group-hover:text-white/90">{deck.title}</h3>
+                  <div className="flex w-full items-center justify-between text-xs text-slate-300">
+                    <span>{deck.slides} slides</span>
+                    <span className="flex items-center gap-2 text-emerald-300">
+                      <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400" /> Ready to pitch
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex h-full flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+            <h2 className="text-lg font-semibold text-white/90">Recent voice sessions</h2>
+            <ul className="mt-4 flex-1 space-y-3 text-sm text-slate-300">
+              <li className="flex items-center justify-between rounded-2xl border border-white/5 bg-slate-900/50 px-4 py-3">
+                <span>Investor Q&A drill</span>
+                <span className="text-xs text-slate-400">3 days ago</span>
+              </li>
+              <li className="flex items-center justify-between rounded-2xl border border-white/5 bg-slate-900/50 px-4 py-3">
+                <span>Market sizing practice</span>
+                <span className="text-xs text-slate-400">Last week</span>
+              </li>
+              <li className="flex items-center justify-between rounded-2xl border border-white/5 bg-slate-900/50 px-4 py-3">
+                <span>Story arc rehearsal</span>
+                <span className="text-xs text-slate-400">2 weeks ago</span>
+              </li>
+            </ul>
+            <button
+              onClick={() => navigate('/practice')}
+              className="mt-6 w-full rounded-full border border-white/20 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:border-white/40 hover:bg-white/10"
+            >
+              Open voice studio
+            </button>
+          </div>
+        </section>
       </div>
     </div>
   )
