@@ -72,26 +72,19 @@ export function Dashboard() {
 
           <div className="flex h-full flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
             <h2 className="text-lg font-semibold text-white/90">Recent voice sessions</h2>
-            <ul className="mt-4 flex-1 space-y-3 text-sm text-slate-300">
-              <li className="flex items-center justify-between rounded-2xl border border-white/5 bg-slate-900/50 px-4 py-3">
-                <span>Investor Q&A drill</span>
-                <span className="text-xs text-slate-400">3 days ago</span>
-              </li>
-              <li className="flex items-center justify-between rounded-2xl border border-white/5 bg-slate-900/50 px-4 py-3">
-                <span>Market sizing practice</span>
-                <span className="text-xs text-slate-400">Last week</span>
-              </li>
-              <li className="flex items-center justify-between rounded-2xl border border-white/5 bg-slate-900/50 px-4 py-3">
-                <span>Story arc rehearsal</span>
-                <span className="text-xs text-slate-400">2 weeks ago</span>
-              </li>
-            </ul>
-            <button
-              onClick={() => navigate('/practice')}
-              className="mt-6 w-full rounded-full border border-white/20 px-4 py-3 text-sm font-semibold text-slate-100 transition hover:border-white/40 hover:bg-white/10"
-            >
-              Open voice studio
-            </button>
+            <div className="mt-6 flex flex-1 flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-white/20 bg-slate-900/40 p-10 text-center">
+              <span className="text-4xl">🎙️</span>
+              <h3 className="text-lg font-semibold text-white">No voice practice yet</h3>
+              <p className="max-w-xs text-sm text-slate-300">
+                Run your first mock VC session to see recordings, feedback, and highlights here.
+              </p>
+              <button
+                onClick={() => navigate('/practice')}
+                className="rounded-full border border-white/20 px-5 py-2 text-sm font-semibold text-slate-100 transition hover:border-white/40 hover:bg-white/10"
+              >
+                Start a practice session
+              </button>
+            </div>
           </div>
         </section>
       </div>
