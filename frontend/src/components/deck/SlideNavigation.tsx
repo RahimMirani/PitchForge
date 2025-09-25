@@ -258,14 +258,7 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
           </div>
         </div>
 
-        <div className="flex-shrink-0 flex flex-col items-stretch gap-2 justify-center">
-          <button className="blck border-black px-3 py-1.5 rounded-full border border-[var(--border-subtle)] bg-black text-[12px] font-medium text-slate-600 hover:text-slate-900 hover:border-[var(--border-strong)]">
-            Export
-          </button>
-          <button className="blck border-black px-3 py-1.5 rounded-full bg-[var(--color-black)] text-white text-[12px] font-semibold shadow-[0_8px_18px_rgba(97,81,255,0.25)] hover:shadow-[0_12px_26px_rgba(97,81,255,0.32)]">
-            Save
-          </button>
-        </div>
+        <div className="flex-shrink-0 flex flex-col items-stretch gap-2 justify-center" />
       </div>
     </div>
   )

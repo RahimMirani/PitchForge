@@ -3,12 +3,14 @@ import { Layout } from '../components/layout/Layout'
 import { SlideNavigation } from '../components/deck/SlideNavigation'
 import { DeckCanvas } from '../components/deck/DeckCanvas'
 import { ChatSidebar } from '../components/chat/ChatSidebar'
+import { useNavigate } from 'react-router-dom'
 
 export function DeckCreation() {
   const [currentDeckId, setCurrentDeckId] = useState<string | null>(null)
   const [isCreatingDeck, setIsCreatingDeck] = useState(false)
   const [deckTitle, setDeckTitle] = useState('')
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
+  const navigate = useNavigate()
   // Create a new deck
   const createNewDeck = async () => {
     if (!deckTitle.trim()) {
@@ -79,6 +81,25 @@ export function DeckCreation() {
         <div className="flex flex-col flex-1 min-h-0">
           <div className="flex flex-col flex-1 min-h-0">
             <div className="px-8 pt-4">
+              <div className="mb-3 flex items-center justify-between">
+                <button
+                  onClick={() => navigate('/dashboard')}
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-black text-xs font-semibold text-slate-700 hover:bg-black hover:text-white transition"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Back to dashboard
+                </button>
+                <div className="flex items-center gap-2">
+                  <button className="px-3 py-1.5 rounded-full border border-black bg-white text-[12px] font-medium text-slate-700 hover:bg-black hover:text-white transition">
+                    Export
+                  </button>
+                  <button className="px-3 py-1.5 rounded-full border border-black bg-[var(--color-violet)] text-white text-[12px] font-semibold shadow-[0_8px_18px_rgba(97,81,255,0.25)] hover:bg-white hover:text-black transition">
+                    Save
+                  </button>
+                </div>
+              </div>
               <SlideNavigation 
                 deckId={currentDeckId} 
                 deckTitle={deckTitle || 'Untitled Deck'}
