@@ -55,43 +55,18 @@ export function Dashboard() {
               </button>
             </div>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {mockDecks.map((deck) => (
-                <button
-                  key={deck.id}
-                  onClick={() => navigate('/create')}
-                  className="group flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/60 p-5 text-left transition hover:border-white/30 hover:bg-slate-900/80"
-                >
-                  <div className="relative w-full overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-white/15 via-white/5 to-white/0">
-                    <div className="aspect-square">
-                      <div className="flex h-full w-full flex-col justify-between p-5">
-                        <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-300/80">
-                          <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-                          Live sync
-                        </div>
-                        <div className="space-y-2 text-xs text-slate-200/90">
-                          <div className="font-semibold text-white">Problem → Solution</div>
-                          <p className="text-slate-300">
-                            Founders lose 20% of their week building decks. PitchForge automates research, copy, and visuals.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex w-full items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-400">
-                    <span>Pitch deck</span>
-                    <span>{deck.createdAt}</span>
-                  </div>
-                  <h3 className="text-lg font-semibold text-white group-hover:text-white/90">{deck.title}</h3>
-                  <div className="flex w-full items-center justify-between text-xs text-slate-300">
-                    <span>{deck.slides} slides</span>
-                    <span className="flex items-center gap-2 text-emerald-300">
-                      <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400" /> Ready to pitch
-                    </span>
-                  </div>
-                </button>
-              ))}
+            <div className="mt-6 flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-white/20 bg-slate-900/40 p-10 text-center">
+              <span className="text-4xl">🗂️</span>
+              <h3 className="text-lg font-semibold text-white">No decks yet</h3>
+              <p className="max-w-sm text-sm text-slate-300">
+                When you generate a new pitch deck, it will appear here with realtime previews and status updates.
+              </p>
+              <button
+                onClick={() => navigate('/create')}
+                className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+              >
+                Create your first deck
+              </button>
             </div>
           </div>
 
