@@ -178,7 +178,7 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[28px] bg-white/88 shadow-[0_30px_80px_rgba(8,15,31,0.35)] backdrop-blur-xl">
-      <div className="flex items-center justify-between border-b border-white/20 px-8 py-5 backdrop-blur">
+      <div className="flex items-center justify-between border-b border-white/20 px-6 py-4 backdrop-blur">
         <div>
           <span className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
             {slides.length > 0 ? `Slide ${activeSlideIndex + 1}` : 'No slides yet'}
@@ -186,9 +186,9 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
           <h3 className="mt-2 text-[28px] font-semibold leading-tight text-slate-900">
             {currentSlide ? currentSlide.title : 'Select or compose a slide'}
           </h3>
-          <p className="text-sm text-slate-500">
-            {slides.length > 0 ? `${slides.length} total slides` : 'Start crafting your story with AI support.'}
-          </p>
+          {slides.length === 0 && (
+            <p className="text-sm text-slate-500">Start crafting your story with AI support.</p>
+          )}
         </div>
         <div className="flex items-center gap-3">
           {currentSlide ? (
@@ -241,8 +241,8 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
       </div>
 
       <div className="relative flex-1 overflow-hidden">
-        <div className="relative h-full overflow-y-auto px-8 py-8">
-          <div className="mx-auto w-full max-w-[1080px]">
+        <div className="relative h-full overflow-y-auto px-6 py-6">
+          <div className="w-full">
             {isLoading ? (
               <div className="space-y-6">
                 <div className="h-7 w-48 rounded-full bg-white/70" />
@@ -251,7 +251,7 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
             ) : currentSlide ? (
               <div className="relative">
                 <div className="absolute -inset-4 rounded-[30px] bg-gradient-to-br from-white/50 to-transparent blur-2xl" />
-                <div className="relative rounded-[28px] border border-white/40 bg-white/95 px-10 py-10 shadow-[0_30px_90px_rgba(8,15,31,0.28)]">
+                <div className="relative rounded-[28px] border border-white/40 bg-white/95 px-8 py-8 shadow-[0_30px_90px_rgba(8,15,31,0.28)]">
                   {isEditing ? (
                     <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
                       <div className="space-y-6">
