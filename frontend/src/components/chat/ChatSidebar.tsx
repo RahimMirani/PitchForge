@@ -148,135 +148,134 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-white/80 backdrop-blur-xl border-l border-[rgba(17,24,39,0.08)]">
       {/* Chat Header */}
-      <div className="px-6 py-6 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 border-b border-gray-200/80">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl flex items-center justify-center shadow-lg">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-            </svg>
+      <div className="px-6 py-5 border-b border-[rgba(17,24,39,0.08)] bg-white/80">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-[rgba(97,81,255,0.65)] to-[rgba(63,209,201,0.6)] flex items-center justify-center shadow-[0_12px_30px_rgba(97,81,255,0.25)]">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 3v1m0 16v1m8-9h1M3 12H2m16.364-6.364l.707-.707M4.929 19.071l-.707.707m15.142-.707l-.707.707M4.222 4.222l-.707-.707M12 7a5 5 0 00-3.535 8.535l-1.06 2.121 2.121-1.06A5 5 0 1012 7z" />
+              </svg>
+              <span className={`absolute -bottom-1 -right-1 h-3 w-3 rounded-full border border-white ${isLoading ? 'bg-amber-400 animate-pulse' : 'bg-[var(--color-aqua)]'}`} />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-base font-semibold text-slate-900">PitchForge Copilot</h3>
+              <p className="text-xs text-slate-500">{isLoading ? 'Synthesising insights…' : 'Ready to collaborate'}</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
-            <p className="text-sm text-slate-600 font-medium">
-              {isLoading ? 'Thinking...' : 'Online'}
-            </p>
-          </div>
+          <button className="px-3 py-1 text-xs font-semibold text-slate-500 rounded-full border border-[rgba(17,24,39,0.08)] hover:border-[rgba(17,24,39,0.18)]">
+            Timeline
+          </button>
         </div>
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 p-6 space-y-4 overflow-y-auto bg-gradient-to-b from-white to-slate-50/30">
-        {/* Show messages */}
+      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 bg-gradient-to-b from-white/90 via-white to-[rgba(97,81,255,0.04)]">
         {messages.length > 0 ? (
           messages.map((message) => (
             <div
               key={message._id}
-              className={`rounded-2xl p-4 border shadow-sm ${
+              className={`group relative max-w-[90%] rounded-2xl px-4 py-3 border text-sm leading-relaxed ${
                 message.role === 'user'
-                  ? 'bg-blue-50 border-blue-200 ml-8'
-                  : 'bg-gradient-to-r from-slate-50 to-gray-50 border-gray-200/60 mr-8'
+                  ? 'ml-auto bg-[rgba(97,81,255,0.08)] border-[rgba(97,81,255,0.25)] text-slate-800 shadow-[0_12px_24px_rgba(97,81,255,0.18)]'
+                  : 'mr-auto bg-white border-[rgba(17,24,39,0.06)] shadow-[0_18px_40px_rgba(15,23,42,0.08)]'
               }`}
             >
-              <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+              <div className="text-[11px] uppercase tracking-[0.2em] text-slate-400 mb-1">
+                {message.role === 'user' ? 'You' : 'Copilot'}
+              </div>
+              <p className="text-[13px] text-slate-800 whitespace-pre-wrap">
                 {message.content}
               </p>
+              {message.role === 'assistant' ? (
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity mt-3 flex gap-2 text-[11px] text-slate-500">
+                  <button className="px-2 py-1 rounded-full border border-[rgba(17,24,39,0.08)] hover:border-[var(--color-violet)] hover:text-[var(--color-violet)]">Add to slide</button>
+                  <button className="px-2 py-1 rounded-full border border-[rgba(17,24,39,0.08)] hover:border-[var(--color-aqua)] hover:text-[var(--color-aqua)]">Ask follow-up</button>
+                </div>
+              ) : null}
             </div>
           ))
         ) : (
-          // Welcome message when no chat history
-          <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-2xl p-5 border border-gray-200/60 shadow-sm">
-            <p className="text-gray-800 leading-relaxed">
-              👋 Hi! I'm here to help you create an amazing pitch deck. What's your startup idea?
-            </p>
+          <div className="rounded-3xl border border-[rgba(17,24,39,0.06)] bg-white p-6 text-center shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
+            <h4 className="text-sm font-semibold text-slate-800 mb-2">Kickstart your conversation</h4>
+            <p className="text-xs text-slate-500">Share your startup idea, or pick a smart suggestion below to craft your first slide together.</p>
           </div>
         )}
-        
-        {/* Loading indicator */}
+
         {isLoading && (
-          <div className="bg-gray-100 rounded-2xl p-4 border border-gray-200 mr-8">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-            </div>
-          </div>
-        )}
-        
-        {/* Suggested Actions - only show if no messages yet */}
-        {messages.length === 0 && !isLoading && (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-slate-500 rounded-full"></div>
-              <p className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Quick Actions</p>
-            </div>
-            
-            <button 
-              onClick={() => handleQuickAction("Help me create a compelling title slide for my startup")}
-              disabled={!deckId || isLoading}
-              className="w-full text-left p-4 rounded-xl border border-gray-200/80 hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:border-slate-300 focus:bg-slate-50 active:bg-slate-100 transition-all duration-200 group shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-slate-200 transition-colors">
-                  <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-gray-900 group-hover:text-slate-900">Create title slide</div>
-                  <div className="text-xs text-gray-500 mt-1">Generate a compelling title for your deck</div>
-                </div>
-              </div>
-            </button>
-            
-            <button 
-              onClick={() => handleQuickAction("Help me define the key problem my startup is solving")}
-              disabled={!deckId || isLoading}
-              className="w-full text-left p-4 rounded-xl border border-gray-200/80 hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:border-slate-300 focus:bg-slate-50 active:bg-slate-100 transition-all duration-200 group shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center group-hover:bg-amber-200 transition-colors">
-                  <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-gray-900 group-hover:text-slate-900">Define the problem</div>
-                  <div className="text-xs text-gray-500 mt-1">Identify the key problem you're solving</div>
-                </div>
-              </div>
-            </button>
+          <div className="mr-auto inline-flex items-center gap-2 rounded-full border border-[rgba(17,24,39,0.08)] bg-white px-4 py-2 text-xs text-slate-500 shadow-sm">
+            <span className="flex items-center gap-1">
+              <span className="h-2 w-2 rounded-full bg-[var(--color-aqua)] animate-bounce" />
+              <span className="h-2 w-2 rounded-full bg-[var(--color-aqua)] animate-bounce" style={{ animationDelay: '0.12s' }} />
+              <span className="h-2 w-2 rounded-full bg-[var(--color-aqua)] animate-bounce" style={{ animationDelay: '0.24s' }} />
+            </span>
+            Thinking…
           </div>
         )}
       </div>
 
-      {/* Chat Input */}
-      <div className="p-6 bg-gradient-to-t from-slate-50 to-white border-t border-gray-200/80">
+      {/* Composer */}
+      <div className="pt-4 pb-5 px-5 border-t border-[rgba(17,24,39,0.08)] bg-white/85 backdrop-blur">
         {!deckId ? (
-          <div className="text-center text-gray-500 text-sm">
-            Create or select a deck to start chatting
-          </div>
+          <div className="text-center text-sm text-slate-500">Select a deck to unlock the copilot.</div>
         ) : (
-          <div className="flex space-x-3">
-            <input
-              type="text"
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Describe your startup idea..."
-              disabled={isLoading}
-              className="flex-1 px-4 py-3 bg-white border border-gray-200/80 rounded-xl text-sm focus:outline-none focus:border-slate-300 focus:ring-0 shadow-sm transition-all duration-200 disabled:opacity-50"
-            />
-            <button 
-              onClick={handleSendMessage}
-              disabled={!inputMessage.trim() || isLoading}
-              className="px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-xl font-semibold hover:from-slate-700 hover:to-slate-800 active:from-slate-800 active:to-slate-900 focus:outline-none active:scale-95 transition-all duration-150 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-            </button>
+          <div className="space-y-3">
+            {messages.length === 0 && !isLoading && (
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => handleQuickAction('Draft a compelling problem slide for a fintech startup')}
+                  className="px-3 py-1.5 text-xs font-semibold text-slate-500 rounded-full border border-[rgba(17,24,39,0.08)] hover:border-[var(--color-violet)] hover:text-[var(--color-violet)]"
+                >
+                  Draft problem slide
+                </button>
+                <button
+                  onClick={() => handleQuickAction('Generate traction metrics copy highlighting month-over-month growth')}
+                  className="px-3 py-1.5 text-xs font-semibold text-slate-500 rounded-full border border-[rgba(17,24,39,0.08)] hover:border-[var(--color-aqua)] hover:text-[var(--color-aqua)]"
+                >
+                  Traction bullets
+                </button>
+              </div>
+            )}
+            <div className="flex items-end gap-3">
+              <div className="flex-1 rounded-2xl border border-[rgba(17,24,39,0.08)] bg-white px-4 py-2.5 shadow-[0_12px_30px_rgba(15,23,42,0.08)] focus-within:border-[var(--color-violet)] focus-within:ring-2 focus-within:ring-[var(--color-violet)]/30">
+                <textarea
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Describe what you need help with…"
+                  disabled={isLoading}
+                  rows={2}
+                  className="w-full bg-transparent text-sm text-slate-700 resize-none leading-relaxed focus:outline-none disabled:opacity-50"
+                />
+                <div className="flex items-center justify-between mt-2 text-[11px] text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <button className="px-2 py-1 rounded-full border border-transparent text-slate-400 hover:text-[var(--color-violet)] hover:border-[var(--color-violet)]/30">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14m-4 0H5a2 2 0 01-2-2V8a2 2 0 012-2h6a2 2 0 012 2v4z" />
+                      </svg>
+                    </button>
+                    <button className="px-2 py-1 rounded-full border border-transparent text-slate-400 hover:text-[var(--color-aqua)] hover:border-[var(--color-aqua)]/30">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 14v7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M5 10v4c0 1.657 3.582 3 8 3s8-1.343 8-3v-4" />
+                      </svg>
+                    </button>
+                  </div>
+                  <span>{inputMessage.length}/500</span>
+                </div>
+              </div>
+              <button
+                onClick={handleSendMessage}
+                disabled={!inputMessage.trim() || isLoading}
+                className="h-11 w-11 rounded-full bg-gradient-to-br from-[var(--color-violet)] to-[var(--color-aqua)] text-white flex items-center justify-center shadow-[0_15px_35px_rgba(97,81,255,0.35)] hover:shadow-[0_18px_40px_rgba(97,81,255,0.45)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 19l9 2-9-18-9 18 9-2zm0-8v8" />
+                </svg>
+              </button>
+            </div>
           </div>
         )}
       </div>
