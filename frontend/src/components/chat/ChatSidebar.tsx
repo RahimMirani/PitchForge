@@ -164,9 +164,6 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
               <p className="text-xs text-slate-300">{isLoading ? 'Synthesising insights…' : 'Ready to collaborate'}</p>
             </div>
           </div>
-          <button className="px-3 py-1 text-xs font-semibold text-slate-200 rounded-full border border-[rgba(255,255,255,0.12)] hover:border-[rgba(99,102,241,0.45)]">
-            Timeline
-          </button>
         </div>
       </div>
 
@@ -223,18 +220,6 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
           <div className="space-y-3">
             {messages.length === 0 && !isLoading && (
               <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => handleQuickAction('Draft a compelling problem slide for a fintech startup')}
-                  className="px-3 py-1.5 text-xs font-semibold text-slate-200 rounded-full border border-[rgba(255,255,255,0.08)] hover:border-[rgba(99,102,241,0.6)] hover:text-[var(--color-violet)]"
-                >
-                  Draft problem slide
-                </button>
-                <button
-                  onClick={() => handleQuickAction('Generate traction metrics copy highlighting month-over-month growth')}
-                  className="px-3 py-1.5 text-xs font-semibold text-slate-200 rounded-full border border-[rgba(255,255,255,0.08)] hover:border-[rgba(45,212,191,0.6)] hover:text-[var(--color-aqua)]"
-                >
-                  Traction bullets
-                </button>
               </div>
             )}
             <div className="flex items-end">
@@ -252,7 +237,7 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
                   <button
                     onClick={handleSendMessage}
                     disabled={!inputMessage.trim() || isLoading}
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[var(--color-aqua)] to-[var(--color-violet)] text-white shadow-[0_16px_34px_rgba(99,102,241,0.45)] hover:shadow-[0_20px_42px_rgba(99,102,241,0.55)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    className=" arrow animate- flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[var(--color-aqua)] to-[var(--color-violet)] text-white shadow-[0_16px_34px_rgba(99,102,241,0.45)] hover:shadow-[0_20px_42px_rgba(99,102,241,0.55)] transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 19l9 2-9-18-9 18 9-2zm0-8v8" />
@@ -261,20 +246,8 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
                 </div>
                 <div className="flex items-center justify-between mt-2 text-[11px] text-slate-500">
                   <div className="flex items-center gap-2">
-                    <button className="px-2 py-1 rounded-full border border-transparent text-slate-400 hover:text-[var(--color-violet)] hover:border-[var(--color-violet)]/30">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14m-4 0H5a2 2 0 01-2-2V8a2 2 0 012-2h6a2 2 0 012 2v4z" />
-                      </svg>
-                    </button>
-                    <button className="px-2 py-1 rounded-full border border-transparent text-slate-400 hover:text-[var(--color-aqua)] hover:border-[var(--color-aqua)]/30">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 14l9-5-9-5-9 5 9 5z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 14v7" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M5 10v4c0 1.657 3.582 3 8 3s8-1.343 8-3v-4" />
-                      </svg>
-                    </button>
                   </div>
-                  <span>{inputMessage.length}/500</span>
+                  <span>{inputMessage.length}/1000</span>
                 </div>
               </div>
             </div>
