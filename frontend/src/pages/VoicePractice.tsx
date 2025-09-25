@@ -1,28 +1,4 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-const vcFirms = [
-  {
-    name: 'Andreessen Horowitz',
-    short: 'a16z',
-    focus: 'Consumer, AI infrastructure, fintech, bio',
-  },
-  {
-    name: 'Y Combinator',
-    short: 'YC',
-    focus: 'Early-stage founders rethinking markets and tooling',
-  },
-  {
-    name: 'Sequoia Capital',
-    short: 'Sequoia',
-    focus: 'Iconic companies across enterprise, consumer, and frontier tech',
-  },
-  {
-    name: 'Lightspeed Venture Partners',
-    short: 'Lightspeed',
-    focus: 'Product-led growth, SaaS, marketplaces, crypto',
-  },
-]
 
 const mockDecks = [
   { id: '1', title: 'FinTech Startup', summary: 'Modern treasury for SMBs.' },
@@ -32,20 +8,6 @@ const mockDecks = [
 
 export function VoicePractice() {
   const navigate = useNavigate()
-  const [selectedFirm, setSelectedFirm] = useState<string | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const openFirmModal = (firmShort: string) => {
-    setSelectedFirm(firmShort)
-    setIsModalOpen(true)
-  }
-
-  const handleStartSession = (deckId?: string) => {
-    setIsModalOpen(false)
-    // TODO: connect selected firm + deck to voice session kickoff
-  }
-
-  const firmDetails = vcFirms.find((firm) => firm.short === selectedFirm)
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100">
@@ -76,31 +38,21 @@ export function VoicePractice() {
           <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
             <div className="flex flex-col gap-4">
               <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Choose your mock VC</p>
-              <h2 className="text-2xl font-semibold text-white">Dial in the investor persona you want feedback from</h2>
+              <h2 className="text-2xl font-semibold text-white">Investor personas coming soon</h2>
               <p className="text-sm text-slate-300">
-                Each persona sharpens different parts of your story—pick one to start the conversation.
+                We&rsquo;re building tailored mock VC profiles so you can spar with different questioning styles. Until then, you can run a freestyle practice session.
               </p>
             </div>
 
-            <div className="mt-8 grid gap-5 sm:grid-cols-2">
-              {vcFirms.map((firm) => (
-                <button
-                  key={firm.short}
-                  onClick={() => openFirmModal(firm.short)}
-                  className="group flex flex-col items-start gap-4 rounded-2xl border border-white/10 bg-slate-950/60 p-6 text-left transition hover:border-white/30 hover:bg-slate-950/80"
-                >
-                  <div className="flex w-full items-center justify-between">
-                    <span className="text-sm uppercase tracking-[0.3em] text-slate-300/90">{firm.short}</span>
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-sm text-slate-200 transition group-hover:border-white/40 group-hover:text-white">
-                      →
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">{firm.name}</h3>
-                    <p className="mt-2 text-sm text-slate-300">{firm.focus}</p>
-                  </div>
-                </button>
-              ))}
+            <div className="mt-10 flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-white/15 bg-slate-950/50 p-10 text-center">
+              <span className="text-4xl">🎧</span>
+              <h3 className="text-lg font-semibold text-white">No personas available yet</h3>
+              <p className="max-w-sm text-sm text-slate-300">
+                Start a practice run without a specific investor, or check back soon for curated VC presets.
+              </p>
+              <button className="rounded-full bg-white px-6 py-2 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
+                Start freestyle session
+              </button>
             </div>
           </div>
 
@@ -123,45 +75,7 @@ export function VoicePractice() {
           </div>
         </main>
 
-        {isModalOpen && firmDetails && (
-          <div className="fixed inset-0 z-20 flex items-center justify-center bg-slate-950/80 px-4 py-10 backdrop-blur">
-            <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950/90 p-8 shadow-2xl">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Mock VC</p>
-                  <h3 className="mt-2 text-2xl font-semibold text-white">{firmDetails.name}</h3>
-                  <p className="mt-2 text-sm text-slate-300">{firmDetails.focus}</p>
-                </div>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="rounded-full border border-white/10 px-3 py-1 text-sm text-slate-300 transition hover:border-white/30 hover:text-white"
-                >
-                  Close
-                </button>
-              </div>
-
-              <div className="mt-6 space-y-3">
-                {mockDecks.map((deck) => (
-                  <button
-                    key={deck.id}
-                    onClick={() => handleStartSession(deck.id)}
-                    className="w-full rounded-2xl border border-white/10 bg-slate-900/70 p-5 text-left transition hover:border-white/30 hover:bg-slate-900/90"
-                  >
-                    <p className="text-sm font-semibold text-white">{deck.title}</p>
-                    <p className="mt-1 text-xs text-slate-300">{deck.summary}</p>
-                  </button>
-                ))}
-
-                <button
-                  onClick={() => handleStartSession()}
-                  className="w-full rounded-2xl border border-dashed border-white/20 bg-slate-900/40 p-5 text-left text-sm font-semibold text-slate-200 transition hover:border-white/30 hover:bg-slate-900/70"
-                >
-                  Practice without a deck
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Investor personas will return once presets are defined */}
       </div>
     </div>
   )
