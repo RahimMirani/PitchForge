@@ -12,6 +12,12 @@ interface Message {
   timestamp: number;
 }
 
+const suggestedPrompts = [
+  'Draft a compelling problem slide with market stats',
+  'Summarize our traction in bullet points',
+  'Write an investor-friendly product overview',
+]
+
 export function ChatSidebar({ deckId }: ChatSidebarProps) {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -139,7 +145,7 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
     }
   };
 
-  const handleQuickAction = async (message: string) => {
+  const handleQuickAction = (message: string) => {
     if (!deckId || isLoading) return;
     
     // Set the input and trigger send
@@ -148,60 +154,75 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
   };
 
   return (
-    <div className="h-full flex flex-col bg-[#0F172A] text-white border-l border-[rgba(255,255,255,0.08)] shadow-[0_0_45px_rgba(15,23,42,0.35)]">
-      {/* Chat Header */}
-      <div className="px-6 py-5 border-b border-[rgba(255,255,255,0.08)] bg-[rgba(15,23,42,0.85)]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-[rgba(99,102,241,0.85)] to-[rgba(45,212,191,0.7)] flex items-center justify-center shadow-[0_18px_40px_rgba(99,102,241,0.35)]">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 3v1m0 16v1m8-9h1M3 12H2m16.364-6.364l.707-.707M4.929 19.071l-.707.707m15.142-.707l-.707.707M4.222 4.222l-.707-.707M12 7a5 5 0 00-3.535 8.535l-1.06 2.121 2.121-1.06A5 5 0 1012 7z" />
-              </svg>
-              <span className={`absolute -bottom-1 -right-1 h-3 w-3 rounded-full border border-[#0F172A] ${isLoading ? 'bg-amber-300 animate-pulse' : 'bg-[var(--color-aqua)]'}`} />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-base font-semibold text-white">PitchForge Copilot</h3>
-              <p className="text-xs text-slate-300">{isLoading ? 'Synthesising insights…' : 'Ready to collaborate'}</p>
-            </div>
+    <div className="flex h-full flex-col overflow-hidden bg-white/85 text-slate-900 backdrop-blur-xl">
+      <div className="border-b border-slate-200/80 px-6 py-5">
+        <div className="flex items-center gap-3">
+          <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--color-violet)]/30 bg-[var(--color-violet)]/10">
+            <svg className="h-6 w-6 text-[var(--color-violet)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 3v1m0 16v1m8-9h1M3 12H2m16.364-6.364l.707-.707M4.929 19.071l-.707.707m15.142-.707l-.707.707M4.222 4.222l-.707-.707M12 7a5 5 0 00-3.535 8.535l-1.06 2.121 2.121-1.06A5 5 0 1012 7z" />
+            </svg>
+            <span
+              className={`absolute -bottom-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full border border-white ${
+                isLoading ? 'bg-amber-300 animate-ping' : 'bg-[var(--color-aqua)]'
+              }`}
+            />
+          </div>
+          <div>
+            <h3 className="text-base font-semibold text-slate-900">PitchForge Copilot</h3>
+            <p className="text-xs text-slate-500">{isLoading ? 'Synthesising insights…' : 'Ready to collaborate'}</p>
           </div>
         </div>
       </div>
 
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 bg-gradient-to-b from-[rgba(15,23,42,0.95)] via-[#111b31] to-[#0b1526]">
+      <div className="flex-1 space-y-4 overflow-y-auto px-6 py-5">
         {messages.length > 0 ? (
           messages.map((message) => (
             <div
               key={message._id}
-              className={`group relative max-w-[90%] rounded-2xl px-4 py-3 border text-sm leading-relaxed ${
+              className={`group relative max-w-[92%] rounded-2xl border px-4 py-3 text-sm leading-relaxed shadow-sm ${
                 message.role === 'user'
-                  ? 'ml-auto bg-[rgba(99,102,241,0.15)] border-[rgba(99,102,241,0.35)] text-slate-100 shadow-[0_15px_35px_rgba(99,102,241,0.3)]'
-                  : 'mr-auto bg-[rgba(12,22,38,0.85)] border-[rgba(255,255,255,0.05)] text-slate-100 shadow-[0_18px_40px_rgba(15,23,42,0.45)]'
+                  ? 'ml-auto border-[var(--color-violet)]/30 bg-[var(--color-violet)]/12 text-slate-900'
+                  : 'mr-auto border-slate-200 bg-white text-slate-700'
               }`}
             >
-              <div className="text-[10px] uppercase tracking-[0.32em] text-slate-400 mb-1">
+              <div className="text-[10px] uppercase tracking-[0.32em] text-slate-400">
                 {message.role === 'user' ? 'You' : 'Copilot'}
               </div>
-              <p className="text-[13px] whitespace-pre-wrap">
-                {message.content}
-              </p>
+              <p className="mt-2 whitespace-pre-wrap">{message.content}</p>
               {message.role === 'assistant' ? (
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity mt-3 flex gap-2 text-[11px] text-slate-300">
-                  <button className="px-2 py-1 rounded-full border border-[rgba(255,255,255,0.08)] hover:border-[rgba(99,102,241,0.6)] hover:text-[var(--color-violet)]">Add to slide</button>
-                  <button className="px-2 py-1 rounded-full border border-[rgba(255,255,255,0.08)] hover:border-[rgba(45,212,191,0.6)] hover:text-[var(--color-aqua)]">Ask follow-up</button>
+                <div className="mt-3 hidden gap-2 text-[11px] text-slate-500 group-hover:flex">
+                  <button className="rounded-full border border-slate-200 px-2 py-1 transition hover:border-[var(--color-violet)] hover:text-[var(--color-violet)]">
+                    Add to slide
+                  </button>
+                  <button className="rounded-full border border-slate-200 px-2 py-1 transition hover:border-[var(--color-aqua)] hover:text-[var(--color-aqua)]">
+                    Ask follow-up
+                  </button>
                 </div>
               ) : null}
             </div>
           ))
         ) : (
-          <div className="rounded-3xl border border-[rgba(255,255,255,0.08)] bg-[rgba(15,23,42,0.75)] p-6 text-center shadow-[0_22px_50px_rgba(15,23,42,0.45)]">
-            <h4 className="text-sm font-semibold text-white mb-2">Kickstart your conversation</h4>
-            <p className="text-xs text-slate-300">Share your startup idea, or pick a smart suggestion below to craft your first slide together.</p>
+          <div className="rounded-3xl border border-slate-200 bg-white/70 p-6 text-center shadow-[0_20px_60px_rgba(8,15,31,0.12)]">
+            <h4 className="text-sm font-semibold text-slate-900">Kickstart your conversation</h4>
+            <p className="mt-2 text-xs text-slate-500">
+              Share your startup idea or try a smart suggestion to help the copilot shape your deck.
+            </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
+              {suggestedPrompts.map((prompt) => (
+                <button
+                  key={prompt}
+                  onClick={() => handleQuickAction(prompt)}
+                  className="rounded-full border border-slate-200 bg-white px-4 py-1 text-xs font-medium text-slate-600 transition hover:border-[var(--color-violet)] hover:text-[var(--color-violet)]"
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
         {isLoading && (
-          <div className="mr-auto inline-flex items-center gap-2 rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(12,22,38,0.9)] px-4 py-2 text-xs text-slate-200 shadow-sm">
+          <div className="mr-auto inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-xs text-slate-500 shadow-sm">
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-full bg-[var(--color-aqua)] animate-bounce" />
               <span className="h-2 w-2 rounded-full bg-[var(--color-aqua)] animate-bounce" style={{ animationDelay: '0.12s' }} />
@@ -212,19 +233,14 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
         )}
       </div>
 
-      {/* Composer */}
-      <div className="pt-4 pb-5 px-5 border-t border-[rgba(255,255,255,0.08)] bg-[rgba(12,22,38,0.95)]">
+      <div className="border-t border-slate-200/80 px-6 py-5">
         {!deckId ? (
           <div className="text-center text-sm text-slate-400">Select a deck to unlock the copilot.</div>
         ) : (
           <div className="space-y-3">
-            {messages.length === 0 && !isLoading && (
-              <div className="flex flex-wrap gap-2">
-              </div>
-            )}
             <div className="flex items-end">
-              <div className="flex-1 rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[rgba(10,18,32,0.95)] px-4 py-3 shadow-[0_14px_32px_rgba(15,23,42,0.2)] focus-within:border-[rgba(99,102,241,0.6)] focus-within:ring-2 focus-within:ring-[var(--color-violet)]/35">
-                <div className="flex gap-3 items-end">
+              <div className="flex-1 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-[0_16px_40px_rgba(8,15,31,0.15)] focus-within:border-[var(--color-violet)] focus-within:ring-2 focus-within:ring-[var(--color-violet)]/25">
+                <div className="flex items-end gap-3">
                   <textarea
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
@@ -232,21 +248,20 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
                     placeholder="Describe what you need help with…"
                     disabled={isLoading}
                     rows={2}
-                    className="flex-1 bg-transparent text-sm text-slate-200 resize-none leading-relaxed focus:outline-none disabled:opacity-50"
+                    className="flex-1 resize-none bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none disabled:opacity-50"
                   />
                   <button
                     onClick={handleSendMessage}
                     disabled={!inputMessage.trim() || isLoading}
-                    className=" arrow animate- flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[var(--color-aqua)] to-[var(--color-violet)] text-white shadow-[0_16px_34px_rgba(99,102,241,0.45)] hover:shadow-[0_20px_42px_rgba(99,102,241,0.55)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[var(--color-aqua)] to-[var(--color-violet)] text-white shadow-[0_18px_45px_rgba(97,81,255,0.35)] transition hover:shadow-[0_22px_55px_rgba(97,81,255,0.45)] disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 19l9 2-9-18-9 18 9-2zm0-8v8" />
                     </svg>
                   </button>
                 </div>
-                <div className="flex items-center justify-between mt-2 text-[11px] text-slate-500">
-                  <div className="flex items-center gap-2">
-                  </div>
+                <div className="mt-2 flex items-center justify-between text-[11px] text-slate-400">
+                  <span>Powered by AI</span>
                   <span>{inputMessage.length}/1000</span>
                 </div>
               </div>

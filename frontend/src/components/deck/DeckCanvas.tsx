@@ -177,39 +177,39 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
   };
 
   return (
-    <div className="relative w-full h-full flex flex-col rounded-3xl border border-[rgba(97,81,255,0.15)] bg-white shadow-[0_30px_80px_rgba(11,18,32,0.12)] overflow-hidden">
-
-      {/* Canvas Header */}
-      <div className="relative flex items-center justify-between px-8 py-5 border-b border-black/10 bg-white">
-        <div className="flex items-start gap-3">
-          <div className="flex flex-col">
-            <span className="inline-flex items-center text-[12px] font-medium text-[var(--color-violet)]">{slides.length > 0 ? `Slide ${activeSlideIndex + 1}` : 'No slides'}</span>
-            <h3 className="text-2xl font-semibold text-slate-900 tracking-tight leading-tight">
-              {currentSlide ? currentSlide.title : 'Select or create a slide'}
-            </h3>
-            <p className="text-sm text-slate-500 mt-1">{slides.length > 0 ? `${slides.length} total slides` : 'Start crafting your story with AI'}</p>
-          </div>
+    <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[28px] bg-white/88 shadow-[0_30px_80px_rgba(8,15,31,0.35)] backdrop-blur-xl">
+      <div className="flex items-center justify-between border-b border-white/20 px-8 py-5 backdrop-blur">
+        <div>
+          <span className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+            {slides.length > 0 ? `Slide ${activeSlideIndex + 1}` : 'No slides yet'}
+          </span>
+          <h3 className="mt-2 text-[28px] font-semibold leading-tight text-slate-900">
+            {currentSlide ? currentSlide.title : 'Select or compose a slide'}
+          </h3>
+          <p className="text-sm text-slate-500">
+            {slides.length > 0 ? `${slides.length} total slides` : 'Start crafting your story with AI support.'}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           {currentSlide ? (
-            <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${isEditing ? 'bg-[rgba(97,81,255,0.12)] text-[var(--color-violet)]' : 'bg-[rgba(63,209,201,0.12)] text-[var(--color-aqua)]'}`}>
+            <span className={`inline-flex items-center rounded-full px-4 py-1 text-xs font-semibold ${isEditing ? 'bg-[rgba(97,81,255,0.14)] text-[var(--color-violet)]' : 'bg-[rgba(63,209,201,0.14)] text-[var(--color-aqua)]'}`}>
               {isEditing ? 'Editing' : 'Viewing'}
             </span>
           ) : null}
-          <div className="h-10 w-px bg-gradient-to-b from-transparent via-[rgba(17,24,39,0.12)] to-transparent" />
+          <div className="h-10 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
           <div className="flex items-center gap-2">
             {isEditing ? (
               <>
                 <button
                   onClick={cancelEditing}
-                  className="px-3.5 py-1.5 rounded-full border border-black text-xs font-semibold text-slate-700 hover:bg-black hover:text-white transition-all duration-200"
+                  className="rounded-full border border-slate-300 bg-white px-4 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={saveSlide}
                   disabled={isSaving}
-                  className="px-4.5 py-1.5 rounded-full border border-black bg-black text-white text-xs font-semibold hover:bg-white hover:text-black transition-all duration-200 disabled:opacity-60"
+                  className="rounded-full bg-[var(--color-violet)] px-5 py-1.5 text-xs font-semibold text-white transition hover:bg-[var(--color-violet)]/90 disabled:opacity-60"
                 >
                   {isSaving ? 'Saving…' : 'Save slide'}
                 </button>
@@ -218,18 +218,18 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
               <>
                 <button
                   onClick={startEditing}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black text-xs font-semibold text-slate-700 hover:bg-black hover:text-white transition-all duration-200"
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
                 >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M16.862 4.487l1.651 1.651a2 2 0 010 2.828l-8.21 8.21-3.715.413a1 1 0 01-1.106-1.106l.413-3.715 8.21-8.21a2 2 0 012.828 0z" />
                   </svg>
                   Edit
                 </button>
                 <button
                   onClick={deleteSlide}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-black bg-white text-[var(--color-coral)] text-xs font-semibold hover:bg-[rgba(255,111,97,0.15)] transition-all duration-200"
+                  className="inline-flex items-center gap-2 rounded-full border border-transparent bg-[rgba(255,111,97,0.18)] px-4 py-1.5 text-xs font-semibold text-[var(--color-coral)] transition hover:bg-[rgba(255,111,97,0.28)]"
                 >
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                   Delete
@@ -240,71 +240,69 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
         </div>
       </div>
 
-      {/* Canvas Content */}
       <div className="relative flex-1 overflow-hidden">
-        <div className="absolute inset-6 rounded-2xl border border-dashed border-[rgba(17,24,39,0.07)] pointer-events-none" />
-        <div className="relative h-full overflow-y-auto px-6 py-8">
-          <div className="mx-auto w-full max-w-[1200px]">
+        <div className="relative h-full overflow-y-auto px-8 py-8">
+          <div className="mx-auto w-full max-w-[1080px]">
             {isLoading ? (
-              <div className="w-full space-y-6">
-                <div className="h-7 w-48 bg-white/60 rounded-full animate-pulse" />
-                <div className="h-[360px] bg-white/70 rounded-2xl border border-[rgba(17,24,39,0.08)] shadow-[0_22px_50px_rgba(15,23,42,0.15)] animate-pulse" />
+              <div className="space-y-6">
+                <div className="h-7 w-48 rounded-full bg-white/70" />
+                <div className="h-[360px] rounded-3xl border border-white/30 bg-white/80 shadow-[0_26px_70px_rgba(8,15,31,0.25)]" />
               </div>
             ) : currentSlide ? (
               <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-br from-white/40 to-transparent rounded-[28px] blur-lg" />
-                <div className="relative bg-white rounded-[24px] border border-[rgba(17,24,39,0.08)] shadow-[0_24px_48px_rgba(15,23,42,0.18)] px-8 py-8">
+                <div className="absolute -inset-4 rounded-[30px] bg-gradient-to-br from-white/50 to-transparent blur-2xl" />
+                <div className="relative rounded-[28px] border border-white/40 bg-white/95 px-10 py-10 shadow-[0_30px_90px_rgba(8,15,31,0.28)]">
                   {isEditing ? (
-                    <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
-                      <div className="space-y-5">
+                    <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+                      <div className="space-y-6">
                         <div>
-                          <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Slide Title</label>
-                          <div className="mt-2 flex items-center gap-3 rounded-2xl border border-[rgba(17,24,39,0.12)] bg-white px-4 py-2.5 focus-within:border-[var(--color-violet)] focus-within:ring-2 focus-within:ring-[var(--color-violet)]/30">
+                          <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Slide title</label>
+                          <div className="mt-2 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 focus-within:border-[var(--color-violet)] focus-within:ring-2 focus-within:ring-[var(--color-violet)]/30">
                             <input
                               type="text"
                               value={editTitle}
                               onChange={(e) => setEditTitle(e.target.value)}
-                              className="flex-1 bg-transparent text-[22px] font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                              className="flex-1 bg-transparent text-[24px] font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none"
                               placeholder="Problem & Opportunity"
                             />
                             <span className="text-[11px] text-slate-400">{editTitle.length}/120</span>
                           </div>
                         </div>
                         <div>
-                          <label className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Narrative</label>
+                          <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Narrative</label>
                           <textarea
                             value={editContent}
                             onChange={(e) => setEditContent(e.target.value)}
-                            className="mt-2 w-full h-[220px] resize-none rounded-2xl border border-[rgba(17,24,39,0.12)] bg-white px-4 py-4 text-base text-slate-700 leading-relaxed focus:border-[var(--color-violet)] focus:ring-2 focus:ring-[var(--color-violet)]/25"
-                            placeholder="Detail the insight, your solution, supporting metrics, and next steps."
+                            className="mt-2 h-[220px] w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-4 text-base leading-relaxed text-slate-700 focus:border-[var(--color-violet)] focus:ring-2 focus:ring-[var(--color-violet)]/25"
+                            placeholder="Detail the insight, your solution, key metrics, and next steps."
                           />
                         </div>
                       </div>
-                      <div className="hidden lg:flex flex-col gap-4 p-5 rounded-2xl border border-[rgba(17,24,39,0.08)] bg-gradient-to-br from-white to-[rgba(97,81,255,0.08)]/60 min-h-[220px]">
-                        <h4 className="text-sm font-semibold text-slate-700">AI Suggestions</h4>
-                        <p className="text-xs text-slate-500">Ask the assistant for bullet points, structure, or investor-focused highlights.</p>
-                        <button className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-aqua)]/20 text-[var(--color-aqua)] text-sm font-semibold hover:bg-[var(--color-aqua)]/30 transition">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <aside className="hidden min-h-[220px] rounded-2xl border border-white/40 bg-white/80 p-6 shadow-inner lg:flex lg:flex-col lg:gap-4">
+                        <h4 className="text-sm font-semibold text-slate-700">AI suggestions</h4>
+                        <p className="text-xs text-slate-500">Ask PitchForge to punch up storytelling, add metrics, or optimize transitions.</p>
+                        <button className="inline-flex items-center gap-2 rounded-full border border-white/50 bg-white px-4 py-2 text-sm font-semibold text-[var(--color-violet)] transition hover:border-[var(--color-violet)]/60 hover:text-[var(--color-violet)]/80">
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 3v6m0 6v6m6-6h-6m-6 0H3" />
                           </svg>
                           Ask AI to improve this slide
                         </button>
-                      </div>
+                      </aside>
                     </div>
                   ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                       <div className="flex flex-wrap items-center justify-between gap-3">
-                        <h1 className="text-[32px] font-bold text-slate-900 tracking-tight">
+                        <h1 className="text-[32px] font-bold tracking-tight text-slate-900">
                           {currentSlide.title}
                         </h1>
-                        <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-black bg-white text-[12px] font-semibold text-slate-800 uppercase tracking-[0.18em]">
+                        <span className="inline-flex items-center rounded-full border border-[var(--color-violet)]/40 bg-[var(--color-violet)]/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-[var(--color-violet)]">
                           Investor ready
                         </span>
                       </div>
                       <div className="space-y-4 text-[16px] leading-relaxed text-slate-700">
                         {currentSlide.content.split('\n').map((paragraph, index) => (
                           <p key={index} className="relative pl-6">
-                            <span className="absolute left-0 top-2 inline-block w-2 h-2 rounded-full bg-[var(--color-violet)]" />
+                            <span className="absolute left-0 top-2 inline-block h-2 w-2 rounded-full bg-[var(--color-violet)]" />
                             {paragraph}
                           </p>
                         ))}
@@ -314,18 +312,18 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
                 </div>
               </div>
             ) : (
-              <div className="relative max-w-2xl mx-auto text-center">
-                <div className="w-24 h-24 mx-auto mb-8 rounded-[24px] bg-gradient-to-br from-[rgba(97,81,255,0.25)] via-[rgba(63,209,201,0.18)] to-white shadow-[0_25px_60px_rgba(15,23,42,0.12)] flex items-center justify-center">
-                  <svg className="blck w-11 h-11 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="mx-auto max-w-2xl text-center">
+                <div className="mx-auto mb-8 flex h-28 w-28 items-center justify-center rounded-[28px] border border-white/30 bg-white/70 shadow-[0_30px_75px_rgba(8,15,31,0.3)]">
+                  <svg className="h-12 w-12 text-[var(--color-violet)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m6-6H6" />
                   </svg>
                 </div>
-                <h3 className="text-3xl font-bold text-slate-900 mb-4">Summon your first slide</h3>
-                <p className="text-slate-500 text-lg leading-relaxed mb-8">
-                  Tap the AI assistant to generate a compelling opener, or compose one manually to kickstart your deck.
+                <h3 className="text-3xl font-bold text-slate-900">Summon your first slide</h3>
+                <p className="mt-3 text-base text-slate-500">
+                  Tap the copilot to generate an opener, or compose your own to kickstart the story.
                 </p>
-                <button className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-[var(--color-violet)] text-white text-sm font-semibold shadow-[0_18px_40px_rgba(97,81,255,0.35)] hover:shadow-[0_24px_50px_rgba(97,81,255,0.45)] transition">
-                  <svg className="w-5 h-5" fill="none" stroke="black" viewBox="0 0 24 24">
+                <button className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--color-violet)] px-8 py-3 text-sm font-semibold text-white shadow-[0_20px_55px_rgba(97,81,255,0.4)] transition hover:bg-[var(--color-violet)]/90">
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 7h16M4 12h16M4 17h16" />
                   </svg>
                   Ask AI to create slide
