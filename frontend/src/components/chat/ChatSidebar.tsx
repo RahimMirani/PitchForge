@@ -237,17 +237,28 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
                 </button>
               </div>
             )}
-            <div className="flex items-end gap-3">
-              <div className="flex-1 rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(8,16,28,0.95)] px-4 py-2.5 shadow-[0_12px_30px_rgba(15,23,42,0.18)] focus-within:border-[rgba(99,102,241,0.6)] focus-within:ring-2 focus-within:ring-[var(--color-violet)]/30">
-                <textarea
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Describe what you need help with…"
-                  disabled={isLoading}
-                  rows={2}
-                  className="w-full bg-transparent text-sm text-slate-200 resize-none leading-relaxed focus:outline-none disabled:opacity-50"
-                />
+            <div className="flex items-end">
+              <div className="flex-1 rounded-2xl border border-[rgba(255,255,255,0.12)] bg-[rgba(10,18,32,0.95)] px-4 py-3 shadow-[0_14px_32px_rgba(15,23,42,0.2)] focus-within:border-[rgba(99,102,241,0.6)] focus-within:ring-2 focus-within:ring-[var(--color-violet)]/35">
+                <div className="flex gap-3 items-end">
+                  <textarea
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Describe what you need help with…"
+                    disabled={isLoading}
+                    rows={2}
+                    className="flex-1 bg-transparent text-sm text-slate-200 resize-none leading-relaxed focus:outline-none disabled:opacity-50"
+                  />
+                  <button
+                    onClick={handleSendMessage}
+                    disabled={!inputMessage.trim() || isLoading}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[var(--color-aqua)] to-[var(--color-violet)] text-white shadow-[0_16px_34px_rgba(99,102,241,0.45)] hover:shadow-[0_20px_42px_rgba(99,102,241,0.55)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 19l9 2-9-18-9 18 9-2zm0-8v8" />
+                    </svg>
+                  </button>
+                </div>
                 <div className="flex items-center justify-between mt-2 text-[11px] text-slate-500">
                   <div className="flex items-center gap-2">
                     <button className="px-2 py-1 rounded-full border border-transparent text-slate-400 hover:text-[var(--color-violet)] hover:border-[var(--color-violet)]/30">
@@ -266,15 +277,6 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
                   <span>{inputMessage.length}/500</span>
                 </div>
               </div>
-              <button
-                onClick={handleSendMessage}
-                disabled={!inputMessage.trim() || isLoading}
-                className="h-11 w-11 rounded-full bg-gradient-to-br from-[var(--color-violet)] to-[var(--color-aqua)] text-white flex items-center justify-center shadow-[0_15px_35px_rgba(97,81,255,0.35)] hover:shadow-[0_18px_40px_rgba(97,81,255,0.45)] transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 19l9 2-9-18-9 18 9-2zm0-8v8" />
-                </svg>
-              </button>
             </div>
           </div>
         )}
