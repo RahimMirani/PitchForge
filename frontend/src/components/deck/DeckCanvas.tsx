@@ -178,12 +178,12 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[28px] bg-white/88 shadow-[0_30px_80px_rgba(8,15,31,0.35)] backdrop-blur-xl">
-      <div className="flex items-center justify-between border-b border-white/20 px-6 py-4 backdrop-blur">
+      <div className="flex items-center justify-between border-b border-white/15 px-5 py-3 backdrop-blur">
         <div>
           <span className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
             {slides.length > 0 ? `Slide ${activeSlideIndex + 1}` : 'No slides yet'}
           </span>
-          <h3 className="mt-2 text-[28px] font-semibold leading-tight text-slate-900">
+          <h3 className="mt-1 text-[26px] font-semibold leading-tight text-slate-900">
             {currentSlide ? currentSlide.title : 'Select or compose a slide'}
           </h3>
           {slides.length === 0 && (
@@ -241,7 +241,7 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
       </div>
 
       <div className="relative flex-1 overflow-hidden">
-        <div className="relative h-full overflow-y-auto px-6 py-6">
+        <div className="relative h-full overflow-y-auto px-5 py-5">
           <div className="w-full">
             {isLoading ? (
               <div className="space-y-6">
@@ -251,43 +251,31 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
             ) : currentSlide ? (
               <div className="relative">
                 <div className="absolute -inset-4 rounded-[30px] bg-gradient-to-br from-white/50 to-transparent blur-2xl" />
-                <div className="relative rounded-[28px] border border-white/40 bg-white/95 px-8 py-8 shadow-[0_30px_90px_rgba(8,15,31,0.28)]">
+                <div className="relative rounded-[24px] border border-white/35 bg-white/95 px-6 py-6 shadow-[0_26px_70px_rgba(8,15,31,0.24)]">
                   {isEditing ? (
-                    <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-                      <div className="space-y-6">
-                        <div>
-                          <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Slide title</label>
-                          <div className="mt-2 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 focus-within:border-[var(--color-violet)] focus-within:ring-2 focus-within:ring-[var(--color-violet)]/30">
-                            <input
-                              type="text"
-                              value={editTitle}
-                              onChange={(e) => setEditTitle(e.target.value)}
-                              className="flex-1 bg-transparent text-[24px] font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none"
-                              placeholder="Problem & Opportunity"
-                            />
-                            <span className="text-[11px] text-slate-400">{editTitle.length}/120</span>
-                          </div>
-                        </div>
-                        <div>
-                          <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Narrative</label>
-                          <textarea
-                            value={editContent}
-                            onChange={(e) => setEditContent(e.target.value)}
-                            className="mt-2 h-[220px] w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-4 text-base leading-relaxed text-slate-700 focus:border-[var(--color-violet)] focus:ring-2 focus:ring-[var(--color-violet)]/25"
-                            placeholder="Detail the insight, your solution, key metrics, and next steps."
+                    <div className="space-y-6">
+                      <div>
+                        <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Slide title</label>
+                        <div className="mt-2 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 focus-within:border-[var(--color-violet)] focus-within:ring-2 focus-within:ring-[var(--color-violet)]/30">
+                          <input
+                            type="text"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            className="flex-1 bg-transparent text-[24px] font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                            placeholder="Problem & Opportunity"
                           />
+                          <span className="text-[11px] text-slate-400">{editTitle.length}/120</span>
                         </div>
                       </div>
-                      <aside className="hidden min-h-[220px] rounded-2xl border border-white/40 bg-white/80 p-6 shadow-inner lg:flex lg:flex-col lg:gap-4">
-                        <h4 className="text-sm font-semibold text-slate-700">AI suggestions</h4>
-                        <p className="text-xs text-slate-500">Ask PitchForge to punch up storytelling, add metrics, or optimize transitions.</p>
-                        <button className="inline-flex items-center gap-2 rounded-full border border-white/50 bg-white px-4 py-2 text-sm font-semibold text-[var(--color-violet)] transition hover:border-[var(--color-violet)]/60 hover:text-[var(--color-violet)]/80">
-                          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 3v6m0 6v6m6-6h-6m-6 0H3" />
-                          </svg>
-                          Ask AI to improve this slide
-                        </button>
-                      </aside>
+                      <div>
+                        <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Narrative</label>
+                        <textarea
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          className="mt-2 h-[300px] w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-4 text-base leading-relaxed text-slate-700 focus:border-[var(--color-violet)] focus:ring-2 focus:ring-[var(--color-violet)]/25"
+                          placeholder="Detail the insight, your solution, key metrics, and next steps."
+                        />
+                      </div>
                     </div>
                   ) : (
                     <div className="space-y-8">
