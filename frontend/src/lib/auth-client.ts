@@ -9,10 +9,35 @@ export const authClient = createAuthClient({
   plugins: [convexClient(), crossDomainClient()],
 });
 
-export const signUpUser = (name: string, email: string, password: string) =>
-  authClient.signUp({ name, email, password });
+export const signUpUser = async (
+  name: string,
+  email: string,
+  password: string,
+) => {
+  const { data, error } = await authClient.signUp.email({
+    name,
+    email,
+    password,
+  });
 
-export const signInUser = (email: string, password: string) =>
-  authClient.signIn({ email, password });
+  if (error) {
+    throw new Error(error.message ?? "Unable to sign up. Please try again.");
+  }
+
+  return data;
+};
+
+export const signInUser = async (email: string, password: string) => {
+  const { data, error } = await authClient.signIn.email({
+    email,
+    password,
+  });
+
+  if (error) {
+    throw new Error(error.message ?? "Invalid credentials. Please try again.");
+  }
+
+  return data;
+};
 
 export const signOutUser = () => authClient.signOut();
