@@ -6,7 +6,7 @@ const http = httpRouter();
 // CORS handling is required for client side frameworks
 authComponent.registerRoutes(http, createAuth, {
   cors: {
-    origin: [process.env.CONVEX_SITE_URL ?? "*"],
+    origin: [process.env.SITE_URL ?? "*"],
     credentials: true,
   },
 });
