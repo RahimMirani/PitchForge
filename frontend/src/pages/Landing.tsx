@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { AuthUI } from '../lib/AuthUI'
 
 const featureHighlights = [
   {
@@ -20,6 +22,13 @@ const featureHighlights = [
 
 export function Landing() {
   const navigate = useNavigate()
+  const [authOpen, setAuthOpen] = useState(false)
+  const [authMode, setAuthMode] = useState<'signIn' | 'signUp'>('signIn')
+
+  const openAuth = (mode: 'signIn' | 'signUp') => {
+    setAuthMode(mode)
+    setAuthOpen(true)
+  }
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
@@ -38,12 +47,20 @@ export function Landing() {
             PitchForge
           </div>
 
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="rounded-full border border-white/20 px-6 py-2 text-sm font-medium tracking-wide text-slate-100 transition hover:border-white/40 hover:bg-white/10"
-          >
-            Sign in
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => openAuth('signIn')}
+              className="rounded-full border border-white/20 px-6 py-2 text-sm font-medium tracking-wide text-slate-100 transition hover:border-white/40 hover:bg-white/10"
+            >
+              Sign in
+            </button>
+            <button
+              onClick={() => openAuth('signUp')}
+              className="rounded-full border border-white/20 px-6 py-2 text-sm font-medium tracking-wide text-slate-100 transition hover:border-white/40 hover:bg-white/10"
+            >
+              Sign up
+            </button>
+          </div>
         </nav>
 
         <main className="flex flex-1 flex-col-reverse items-center gap-14 py-16 lg:flex-row lg:items-center lg:justify-between">
@@ -60,10 +77,10 @@ export function Landing() {
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => openAuth('signUp')}
                 className="rounded-full bg-white px-8 py-3 text-sm font-semibold tracking-wide text-slate-950 transition hover:bg-slate-100"
               >
-                Sign in to get started
+                Sign up to get started
               </button>
               <div className="text-sm text-slate-300/80">
                 Create, refine, and practice your pitch without leaving the browser.
@@ -121,6 +138,13 @@ export function Landing() {
           </div>
         </section>
       </div>
+      <AuthUI
+        isOpen={authOpen}
+        mode={authMode}
+        onModeChange={setAuthMode}
+        onClose={() => setAuthOpen(false)}
+        onAuthenticated={() => navigate('/dashboard')}
+      />
     </div>
   )
 }
