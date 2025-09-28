@@ -4,12 +4,6 @@ import { signOutUser } from '../lib/auth-client'
 export function Dashboard() {
   const navigate = useNavigate()
 
-  // Mock data for now
-  const mockDecks = [
-    { id: '1', title: 'FinTech Startup', createdAt: '2024-01-15', slides: 12 },
-    { id: '2', title: 'AI SaaS Platform', createdAt: '2024-01-10', slides: 8 },
-    { id: '3', title: 'E-commerce Solution', createdAt: '2024-01-05', slides: 10 },
-  ]
 
   const handleSignOut = async () => {
     await signOutUser()
