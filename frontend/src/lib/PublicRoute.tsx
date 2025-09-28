@@ -1,5 +1,5 @@
 import { useConvexAuth } from "convex/react";
-import { PropsWithChildren, useEffect } from "react";
+import { type PropsWithChildren, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function PublicRoute({ children }: PropsWithChildren) {
