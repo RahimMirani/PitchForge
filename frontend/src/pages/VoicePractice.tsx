@@ -109,6 +109,10 @@ export function VoicePractice() {
                   </select>
                 </div>
 
+                <div>
+                  <h4 className="font-semibold text-white text-center">OR</h4>
+                </div>
+
                 <div className="cursor-pointer rounded-xl border border-white/10 bg-slate-900/70 p-4">
                   <h4 className="font-semibold text-white">Practice without a deck</h4>
                   <p className="mt-2 text-sm text-slate-300">Spar with the AI in freestyle mode.</p>
