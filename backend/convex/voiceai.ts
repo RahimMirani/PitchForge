@@ -19,7 +19,7 @@ export const getVapiAssistantConfig = action({
       return {
         model: {
           provider: 'openai',
-          model: 'gpt-3.5-turbo',
+          model: 'gpt-4o-mini',
           messages: [
             {
               role: 'system',
@@ -29,7 +29,7 @@ export const getVapiAssistantConfig = action({
         },
         voice: {
           provider: 'playht',
-          voiceId: 'larry',
+          voiceId: 'susan',
         },
       };
     },
