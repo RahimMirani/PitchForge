@@ -4,11 +4,6 @@ import { cn } from '../lib/utils'
 import { useQuery } from 'convex/react'
 import { api } from '../../../backend/convex/_generated/api'
 
-const mockDecks = [
-  { _id: '1', title: 'FinTech Startup', summary: 'Modern treasury for SMBs.' },
-  { _id: '2', title: 'AI SaaS Platform', summary: 'LLM copilots for ops teams.' },
-  { _id: '3', title: 'E-commerce Solution', summary: 'Unified checkout for DTC brands.' },
-]
 
 export function VoicePractice() {
   const navigate = useNavigate()
