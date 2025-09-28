@@ -2,7 +2,7 @@ import Vapi from '@vapi-ai/web';
 import { useEffect, useState } from 'react';
 
 // Replace with your Vapi Public Key
-const VAPI_PUBLIC_KEY = process.env.VAPI_PUBLIC_KEY;
+const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY;
 
 interface VapiSessionProps {
   onSessionEnd: () => void;
