@@ -11,6 +11,7 @@ const mockDecks = [
 export function VoicePractice() {
   const navigate = useNavigate()
   const [selectedFirmTag, setSelectedFirmTag] = useState<string | null>(null)
+  const [selectedDeckOption, setSelectedDeckOption] = useState<string | null>(null)
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100">
@@ -106,9 +107,18 @@ export function VoicePractice() {
                 <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Select your deck</p>
               </div>
               <div className="mt-10 flex flex-col gap-4">
-                <div className="group cursor-pointer rounded-xl border border-white/10 bg-slate-900/70 p-4">
-                  <select className="w-full cursor-pointer bg-transparent font-semibold text-white outline-none">
-                    <option value="" disabled selected>
+                <div
+                  className={cn(
+                    'group rounded-xl border border-white/10 bg-slate-900/70 p-4 transition',
+                    selectedDeckOption && selectedDeckOption !== 'freestyle' && 'ring-2 ring-blue-500',
+                  )}
+                >
+                  <select
+                    value={selectedDeckOption !== 'freestyle' ? selectedDeckOption ?? '' : ''}
+                    onChange={(e) => setSelectedDeckOption(e.target.value)}
+                    className="w-full cursor-pointer bg-transparent font-semibold text-white outline-none"
+                  >
+                    <option value="" disabled>
                       Select a pitch deck
                     </option>
                     {mockDecks.map((deck) => (
@@ -120,10 +130,16 @@ export function VoicePractice() {
                 </div>
 
                 <div>
-                  <h4 className="font-semibold text-white text-center">OR</h4>
+                  <h4 className="text-center font-semibold text-white">OR</h4>
                 </div>
 
-                <div className="cursor-pointer rounded-xl border border-white/10 bg-slate-900/70 p-4">
+                <div
+                  className={cn(
+                    'cursor-pointer rounded-xl border border-white/10 bg-slate-900/70 p-4 transition',
+                    selectedDeckOption === 'freestyle' && 'ring-2 ring-blue-500',
+                  )}
+                  onClick={() => setSelectedDeckOption('freestyle')}
+                >
                   <h4 className="font-semibold text-white">Practice without a deck</h4>
                   <p className="mt-2 text-sm text-slate-300">Spar with the AI in freestyle mode.</p>
                 </div>
