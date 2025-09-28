@@ -34,7 +34,26 @@ export function VoicePractice() {
           </div>
         </header>
 
+
         <main className="flex flex-col gap-10">
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-300">How it works</p>
+            <div className="mt-6 grid gap-6 md:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
+                <p className="text-sm font-semibold text-white">1 · Pick an investor</p>
+                <p className="mt-2 text-sm text-slate-300">We tune questions to match their typical diligence angle and pressure.</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
+                <p className="text-sm font-semibold text-white">2 · Select your deck</p>
+                <p className="mt-2 text-sm text-slate-300">Pair a generated deck or freestyle to get feedback on a specific storyline.</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
+                <p className="text-sm font-semibold text-white">3 · Practice in realtime</p>
+                <p className="mt-2 text-sm text-slate-300">Voice session kicks off with live transcript, highlights, and follow-up prompts.</p>
+              </div>
+            </div>
+          </div>
+
           <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
             <div className="flex flex-col gap-4">
               <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Choose your mock VC</p>
@@ -69,24 +88,6 @@ export function VoicePractice() {
                   <p className="text-sm text-slate-300">{firm.focus}</p>
                 </div>
               ))}
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-300">How it works</p>
-            <div className="mt-6 grid gap-6 md:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
-                <p className="text-sm font-semibold text-white">1 · Pick an investor</p>
-                <p className="mt-2 text-sm text-slate-300">We tune questions to match their typical diligence angle and pressure.</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
-                <p className="text-sm font-semibold text-white">2 · Select your deck</p>
-                <p className="mt-2 text-sm text-slate-300">Pair a generated deck or freestyle to get feedback on a specific storyline.</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5">
-                <p className="text-sm font-semibold text-white">3 · Practice in realtime</p>
-                <p className="mt-2 text-sm text-slate-300">Voice session kicks off with live transcript, highlights, and follow-up prompts.</p>
-              </div>
             </div>
           </div>
         </main>
