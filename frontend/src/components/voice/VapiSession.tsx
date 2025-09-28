@@ -1,5 +1,7 @@
 import Vapi from '@vapi-ai/web';
 import { useEffect, useState } from 'react';
+import { useAction } from 'convex/react';
+import { api } from '../../../../backend/convex/_generated/api';
 
 // Replace with your Vapi Public Key
 const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY;
@@ -13,29 +15,54 @@ interface VapiSessionProps {
 export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption }: VapiSessionProps) {
   const [callStatus, setCallStatus] = useState('Fetching session details...');
   const [transcript, setTranscript] = useState('');
+  const getVapiConfig = useAction(api.voiceai.getVapiAssistantConfig);
 
   useEffect(() => {
-    const vapi = new Vapi(VAPI_PUBLIC_KEY);
+    let vapi: Vapi | null = null;
 
-    vapi.on('call-start', () => {
-      setCallStatus('Connected');
-    });
+    const runSession = async () => {
+      try {
+        const config = await getVapiConfig({
+          firmTag: selectedFirmTag,
+          deckOption: selectedDeckOption,
+        });
 
-    vapi.on('call-end', () => {
-      setCallStatus('Session Ended');
-      onSessionEnd();
-    });
+        if (!config) {
+          setCallStatus('Error: No config received');
+          return;
+        }
 
-    vapi.on('transcript', (data) => {
-      if (data.type === 'transcript') {
-        setTranscript(data.transcript);
+        setCallStatus('Initializing call...');
+        vapi = new Vapi(VAPI_PUBLIC_KEY);
+
+        vapi.on('call-start', () => {
+          setCallStatus('Connected');
+        });
+
+        vapi.on('call-end', () => {
+          setCallStatus('Session Ended');
+          onSessionEnd();
+        });
+
+        vapi.on('transcript', (data) => {
+          if (data.type === 'transcript') {
+            setTranscript(data.transcript);
+          }
+        });
+
+        vapi.start(config);
+      } catch (error) {
+        console.error('Error starting Vapi session:', error);
+        setCallStatus('Error');
       }
-    });
+    };
+
+    runSession();
 
     return () => {
-      vapi.stop();
+      vapi?.stop();
     };
-  }, [selectedFirmTag, selectedDeckOption, onSessionEnd]);
+  }, [selectedFirmTag, selectedDeckOption, onSessionEnd, getVapiConfig]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">

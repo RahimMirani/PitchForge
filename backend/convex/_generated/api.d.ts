@@ -14,6 +14,7 @@ import type * as decks from "../decks.js";
 import type * as http from "../http.js";
 import type * as messages from "../messages.js";
 import type * as slides from "../slides.js";
+import type * as voiceai from "../voiceai.js";
 
 import type {
   ApiFromModules,
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   messages: typeof messages;
   slides: typeof slides;
+  voiceai: typeof voiceai;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
