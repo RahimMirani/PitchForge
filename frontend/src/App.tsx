@@ -4,37 +4,15 @@ import { Dashboard } from './pages/Dashboard'
 import { VoicePractice } from './pages/VoicePractice'
 import { DeckCreation } from './pages/DeckCreation'
 import './App.css'
-import { AuthSession } from './lib/authSession'
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route
-          path="/dashboard"
-          element={
-            <AuthSession>
-              <Dashboard />
-            </AuthSession>
-          }
-        />
-        <Route
-          path="/practice"
-          element={
-            <AuthSession>
-              <VoicePractice />
-            </AuthSession>
-          }
-        />
-        <Route
-          path="/create"
-          element={
-            <AuthSession>
-              <DeckCreation />
-            </AuthSession>
-          }
-        />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/practice" element={<VoicePractice />} />
+        <Route path="/create" element={<DeckCreation />} />
       </Routes>
     </Router>
   )
