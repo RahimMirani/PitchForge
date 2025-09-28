@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { signOutUser } from '../lib/auth-client'
 
 export function Dashboard() {
   const navigate = useNavigate()
@@ -9,6 +10,11 @@ export function Dashboard() {
     { id: '2', title: 'AI SaaS Platform', createdAt: '2024-01-10', slides: 8 },
     { id: '3', title: 'E-commerce Solution', createdAt: '2024-01-05', slides: 10 },
   ]
+
+  const handleSignOut = async () => {
+    await signOutUser()
+    navigate('/')
+  }
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
@@ -30,7 +36,7 @@ export function Dashboard() {
             </div>
 
             <button
-              onClick={() => navigate('/')}
+              onClick={handleSignOut}
               className="ml-auto flex items-center justify-center gap-2 rounded-full border border-white/10 px-6 py-3 text-sm font-semibold tracking-wide text-slate-200 transition hover:border-white/30 hover:bg-white/10"
             >
               <span className="text-lg">↩︎</span>
