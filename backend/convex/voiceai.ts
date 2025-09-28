@@ -27,10 +27,16 @@ export const getVapiAssistantConfig = action({
             },
           ],
         },
-        voice: {
-          provider: 'playht',
-          voiceId: 'susan',
+        transcriber: {
+          provider: 'deepgram',
+          model: 'nova-2',
+          language: 'en',
         },
+        voice: {
+          provider: 'vapi',
+          voiceId: 'Elliot',
+        },
+        firstMessage: `Hi, I'm simulating a partner from ${args.firmTag}. Thanks for taking the time. Please, begin your pitch whenever you're ready.`,
       };
     },
   }); 
