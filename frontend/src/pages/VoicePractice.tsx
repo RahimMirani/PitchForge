@@ -13,6 +13,8 @@ export function VoicePractice() {
   const [selectedFirmTag, setSelectedFirmTag] = useState<string | null>(null)
   const [selectedDeckOption, setSelectedDeckOption] = useState<string | null>(null)
 
+  const isButtonDisabled = !selectedFirmTag || !selectedDeckOption
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100">
       <div className="absolute inset-0">
@@ -148,7 +150,11 @@ export function VoicePractice() {
           </div>
 
           <div className="mt-8">
-            <button className="flex w-full items-center justify-center gap-3 rounded-xl bg-indigo-600 py-4 text-base font-semibold text-white shadow-lg transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-50">
+            <button
+              disabled={isButtonDisabled}
+              onClick={() => console.log({ selectedFirmTag, selectedDeckOption })}
+              className="flex w-full items-center justify-center gap-3 rounded-xl bg-indigo-600 py-4 text-base font-semibold text-white shadow-lg transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mic">
                 <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
                 <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
