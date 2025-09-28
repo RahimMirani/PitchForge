@@ -1,17 +1,20 @@
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { cn } from '../lib/utils'
+import { useQuery } from 'convex/react'
+import { api } from '../../../backend/convex/_generated/api'
 
 const mockDecks = [
-  { id: '1', title: 'FinTech Startup', summary: 'Modern treasury for SMBs.' },
-  { id: '2', title: 'AI SaaS Platform', summary: 'LLM copilots for ops teams.' },
-  { id: '3', title: 'E-commerce Solution', summary: 'Unified checkout for DTC brands.' },
+  { _id: '1', title: 'FinTech Startup', summary: 'Modern treasury for SMBs.' },
+  { _id: '2', title: 'AI SaaS Platform', summary: 'LLM copilots for ops teams.' },
+  { _id: '3', title: 'E-commerce Solution', summary: 'Unified checkout for DTC brands.' },
 ]
 
 export function VoicePractice() {
   const navigate = useNavigate()
   const [selectedFirmTag, setSelectedFirmTag] = useState<string | null>(null)
   const [selectedDeckOption, setSelectedDeckOption] = useState<string | null>(null)
+  const decks = useQuery(api.decks.getDecks)
 
   const isButtonDisabled = !selectedFirmTag || !selectedDeckOption
 
@@ -121,10 +124,10 @@ export function VoicePractice() {
                     className="w-full cursor-pointer bg-transparent font-semibold text-white outline-none"
                   >
                     <option value="" disabled>
-                      Select a pitch deck
+                      {decks === undefined ? 'Loading decks...' : 'Select a pitch deck'}
                     </option>
-                    {mockDecks.map((deck) => (
-                      <option key={deck.id} value={deck.id} className="bg-slate-800 text-white">
+                    {decks?.map((deck) => (
+                      <option key={deck._id} value={deck._id} className="bg-slate-800 text-white">
                         {deck.title}
                       </option>
                     ))}
