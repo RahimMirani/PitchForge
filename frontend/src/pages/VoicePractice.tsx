@@ -54,41 +54,66 @@ export function VoicePractice() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
-            <div className="flex flex-col gap-4">
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Choose your mock VC</p>
-            </div>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
+              <div className="flex flex-col gap-4">
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Choose your mock VC</p>
+              </div>
 
-            <div className="mt-10 grid gap-6 sm:grid-cols-2">
-              {[
-                {
-                  tag: 'a16z',
-                  name: 'Andreessen Horowitz',
-                  focus: 'Breakout AI, consumer, and fintech founders.',
-                },
-                {
-                  tag: 'YC',
-                  name: 'Y Combinator',
-                  focus: 'Early-stage teams with fast iteration and sharp stories.',
-                },
-                {
-                  tag: 'Sequoia',
-                  name: 'Sequoia Capital',
-                  focus: 'Global scale businesses with durable moats.',
-                },
-                {
-                  tag: 'Lightspeed',
-                  name: 'Lightspeed Venture Partners',
-                  focus: 'Product-led growth, SaaS, marketplaces, and crypto.',
-                },
-              ].map((firm) => (
-                <div key={firm.tag} className="flex flex-col gap-3 rounded-xl border border-white/10 bg-slate-900/70 p-6">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-400">{firm.tag}</p>
-                  <h4 className="text-lg font-semibold text-white">{firm.name}</h4>
-                  <p className="text-sm text-slate-300">{firm.focus}</p>
-                </div>
-              ))}
+              <div className="mt-10 grid gap-4 sm:grid-cols-2">
+                {[
+                  {
+                    tag: 'a16z',
+                    name: 'Andreessen Horowitz',
+                    focus: 'Breakout AI, consumer, and fintech founders.',
+                  },
+                  {
+                    tag: 'YC',
+                    name: 'Y Combinator',
+                    focus: 'Early-stage teams with fast iteration and sharp stories.',
+                  },
+                  {
+                    tag: 'Sequoia',
+                    name: 'Sequoia Capital',
+                    focus: 'Global scale businesses with durable moats.',
+                  },
+                  {
+                    tag: 'Lightspeed',
+                    name: 'Lightspeed Venture Partners',
+                    focus: 'Product-led growth, SaaS, marketplaces, and crypto.',
+                  },
+                ].map((firm) => (
+                  <div key={firm.tag} className="flex flex-col gap-3 rounded-xl border border-white/10 bg-slate-900/70 p-4">
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-400">{firm.tag}</p>
+                    <h4 className="text-lg font-semibold text-white">{firm.name}</h4>
+                    <p className="text-sm text-slate-300">{firm.focus}</p>
+                  </div>
+                ))}
+              </div>
             </div>
+            <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
+              <div className="flex flex-col gap-4">
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Select your deck</p>
+              </div>
+              <div className="mt-10 flex flex-col gap-4">
+                <div className="cursor-pointer rounded-xl border border-white/10 bg-slate-900/70 p-4">
+                  <h4 className="font-semibold text-white">Practice without a deck</h4>
+                  <p className="mt-2 text-sm text-slate-300">Spar with the AI in freestyle mode.</p>
+                </div>
+                {mockDecks.map((deck) => (
+                  <div key={deck.id} className="cursor-pointer rounded-xl border border-white/10 bg-slate-900/70 p-4">
+                    <h4 className="font-semibold text-white">{deck.title}</h4>
+                    <p className="mt-2 text-sm text-slate-300">{deck.summary}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+            <button className="w-full rounded-lg bg-indigo-600 py-3.5 text-base font-semibold text-white shadow-lg transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50">
+              Start Practice
+            </button>
           </div>
         </main>
 
