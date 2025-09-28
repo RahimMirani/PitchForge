@@ -11,22 +11,31 @@ interface VapiSessionProps {
 }
 
 export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption }: VapiSessionProps) {
-  const [callStatus, setCallStatus] = useState('Initializing...');
+  const [callStatus, setCallStatus] = useState('Fetching session details...');
   const [transcript, setTranscript] = useState('');
 
   useEffect(() => {
-    // This is where we will initialize Vapi and start the call
-    console.log('VapiSession mounted with:', { selectedFirmTag, selectedDeckOption });
+    const vapi = new Vapi(VAPI_PUBLIC_KEY);
 
-    // Placeholder for call logic
-    setTimeout(() => {
+    vapi.on('call-start', () => {
       setCallStatus('Connected');
-    }, 2000);
+    });
+
+    vapi.on('call-end', () => {
+      setCallStatus('Session Ended');
+      onSessionEnd();
+    });
+
+    vapi.on('transcript', (data) => {
+      if (data.type === 'transcript') {
+        setTranscript(data.transcript);
+      }
+    });
 
     return () => {
-      // Cleanup logic will go here
+      vapi.stop();
     };
-  }, [selectedFirmTag, selectedDeckOption]);
+  }, [selectedFirmTag, selectedDeckOption, onSessionEnd]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
