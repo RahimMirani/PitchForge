@@ -143,7 +143,6 @@ export function Landing() {
         mode={authMode}
         onModeChange={setAuthMode}
         onClose={() => setAuthOpen(false)}
-        onAuthenticated={() => navigate('/dashboard')}
       />
     </div>
   )

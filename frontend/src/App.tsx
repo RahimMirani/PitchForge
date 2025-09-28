@@ -5,13 +5,21 @@ import { VoicePractice } from './pages/VoicePractice'
 import { DeckCreation } from './pages/DeckCreation'
 import './App.css'
 import { AuthRoute } from './lib/authroute'
+import { PublicRoute } from './lib/PublicRoute'
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* Public routes that anyone can access */}
-        <Route path="/" element={<Landing />} />
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <Landing />
+            </PublicRoute>
+          }
+        />
 
         {/* Protected routes that require authentication */}
         <Route
