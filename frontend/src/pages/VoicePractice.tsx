@@ -96,22 +96,34 @@ export function VoicePractice() {
                 <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Select your deck</p>
               </div>
               <div className="mt-10 flex flex-col gap-4">
+                <div className="group cursor-pointer rounded-xl border border-white/10 bg-slate-900/70 p-4">
+                  <select className="w-full cursor-pointer bg-transparent font-semibold text-white outline-none">
+                    <option value="" disabled selected>
+                      Select a pitch deck
+                    </option>
+                    {mockDecks.map((deck) => (
+                      <option key={deck.id} value={deck.id} className="bg-slate-800 text-white">
+                        {deck.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="cursor-pointer rounded-xl border border-white/10 bg-slate-900/70 p-4">
                   <h4 className="font-semibold text-white">Practice without a deck</h4>
                   <p className="mt-2 text-sm text-slate-300">Spar with the AI in freestyle mode.</p>
                 </div>
-                {mockDecks.map((deck) => (
-                  <div key={deck.id} className="cursor-pointer rounded-xl border border-white/10 bg-slate-900/70 p-4">
-                    <h4 className="font-semibold text-white">{deck.title}</h4>
-                    <p className="mt-2 text-sm text-slate-300">{deck.summary}</p>
-                  </div>
-                ))}
               </div>
             </div>
           </div>
 
-          <div className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-            <button className="w-full rounded-lg bg-indigo-600 py-3.5 text-base font-semibold text-white shadow-lg transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50">
+          <div className="mt-8">
+            <button className="flex w-full items-center justify-center gap-3 rounded-xl bg-indigo-600 py-4 text-base font-semibold text-white shadow-lg transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-50">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-mic">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" x2="12" y1="19" y2="22" />
+              </svg>
               Start Practice
             </button>
           </div>
