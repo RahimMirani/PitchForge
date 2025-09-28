@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { cn } from '../lib/utils'
 
 const mockDecks = [
   { id: '1', title: 'FinTech Startup', summary: 'Modern treasury for SMBs.' },
@@ -8,6 +10,7 @@ const mockDecks = [
 
 export function VoicePractice() {
   const navigate = useNavigate()
+  const [selectedFirmTag, setSelectedFirmTag] = useState<string | null>(null)
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-100">
@@ -83,7 +86,14 @@ export function VoicePractice() {
                     focus: 'Product-led growth, SaaS, marketplaces, and crypto.',
                   },
                 ].map((firm) => (
-                  <div key={firm.tag} className="flex flex-col gap-3 rounded-xl border border-white/10 bg-slate-900/70 p-4">
+                  <div
+                    key={firm.tag}
+                    className={cn(
+                      'cursor-pointer rounded-xl border border-white/10 bg-slate-900/70 p-4 transition',
+                      selectedFirmTag === firm.tag && 'ring-2 ring-blue-500',
+                    )}
+                    onClick={() => setSelectedFirmTag(firm.tag)}
+                  >
                     <p className="text-xs uppercase tracking-[0.3em] text-slate-400">{firm.tag}</p>
                     <h4 className="text-lg font-semibold text-white">{firm.name}</h4>
                     <p className="text-sm text-slate-300">{firm.focus}</p>
