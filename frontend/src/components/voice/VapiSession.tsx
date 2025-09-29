@@ -58,12 +58,24 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
 
         vapi.on('message', (message) => {
           if (
-            message.type === 'transcript' &&
-            message.transcriptType === 'final'
+            (message.type === 'transcript' && message.transcriptType === 'final') ||
+            (message.type === 'message' && message.messageType === 'final')
           ) {
-            setConversation((prev) => [...prev, { role: message.role, content: message.transcript }]);
-          } else if (message.type === 'message' && message.messageType === 'final') {
-            setConversation((prev) => [...prev, { role: message.role, content: message.message }]);
+            const role = message.type === 'transcript' ? message.role : message.role;
+            const content = message.type === 'transcript' ? message.transcript : message.message;
+
+            setConversation((prev) => {
+              const lastMessage = prev[prev.length - 1];
+              if (lastMessage && lastMessage.role === role) {
+                // Append to the last message if the role is the same
+                const updatedConversation = [...prev];
+                updatedConversation[updatedConversation.length - 1].content += ` ${content}`;
+                return updatedConversation;
+              } else {
+                // Otherwise, add a new message
+                return [...prev, { role, content }];
+              }
+            });
           }
         });
 
@@ -83,13 +95,13 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-slate-900 p-8 text-white">
+      <div className="w-full max-w-4xl rounded-2xl border border-white/10 bg-slate-900 p-8 text-white">
         <h2 className="text-2xl font-semibold">Voice Practice Session</h2>
         <p className="mt-2 text-slate-400">
           VC Persona: <span className="font-medium text-white">{selectedFirmTag}</span>
         </p>
 
-        <div ref={transcriptContainerRef} className="mt-6 h-64 overflow-y-auto rounded-lg bg-slate-950/50 p-4 space-y-4">
+        <div ref={transcriptContainerRef} className="mt-6 h-96 space-y-4 overflow-y-auto rounded-lg bg-slate-950/50 p-4">
           {conversation.length === 0 ? (
             <p className="text-sm text-slate-400">Waiting for transcript...</p>
           ) : (
