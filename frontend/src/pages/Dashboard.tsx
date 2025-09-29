@@ -1,9 +1,18 @@
 import { useNavigate } from 'react-router-dom'
 import { signOutUser } from '../lib/auth-client'
+import { useQuery } from 'convex/react'
+import { api } from '../../../backend/convex/_generated/api'
+import { type Id } from '../../../backend/convex/_generated/dataModel'
+
+interface Conversation {
+  _id: Id<'Voiceconversations'>
+  _creationTime: number
+  firmTag: string
+}
 
 export function Dashboard() {
   const navigate = useNavigate()
-
+  const recentConversations = useQuery(api.voiceai.getRecentConversations)
 
   const handleSignOut = async () => {
     await signOutUser()
@@ -82,18 +91,45 @@ export function Dashboard() {
 
           <div className="flex h-full flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
             <h2 className="text-lg font-semibold text-white/90">Recent voice sessions</h2>
-            <div className="mt-6 flex flex-1 flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-white/20 bg-slate-900/40 p-10 text-center">
-              <span className="text-4xl">🎙️</span>
-              <h3 className="text-lg font-semibold text-white">No voice practice yet</h3>
-              <p className="max-w-xs text-sm text-slate-300">
-                Run your first mock VC session to see recordings, feedback, and highlights here.
-              </p>
-              <button
-                onClick={() => navigate('/practice')}
-                className="rounded-full border border-white/20 px-5 py-2 text-sm font-semibold text-slate-100 transition hover:border-white/40 hover:bg-white/10"
-              >
-                Start a practice session
-              </button>
+            <div className="mt-6 flex flex-1 flex-col">
+              {recentConversations === undefined ? (
+                <div className="flex-1 flex items-center justify-center text-slate-400">Loading sessions...</div>
+              ) : recentConversations.length === 0 ? (
+                <div className="flex flex-1 flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-white/20 bg-slate-900/40 p-10 text-center">
+                  <span className="text-4xl">🎙️</span>
+                  <h3 className="text-lg font-semibold text-white">No voice practice yet</h3>
+                  <p className="max-w-xs text-sm text-slate-300">
+                    Run your first mock VC session to see recordings, feedback, and highlights here.
+                  </p>
+                  <button
+                    onClick={() => navigate('/practice')}
+                    className="rounded-full border border-white/20 px-5 py-2 text-sm font-semibold text-slate-100 transition hover:border-white/40 hover:bg-white/10"
+                  >
+                    Start a practice session
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {recentConversations.map((convo: Conversation) => (
+                    <div
+                      key={convo._id}
+                      className="flex items-center justify-between rounded-xl bg-slate-900/50 p-4"
+                    >
+                      <div>
+                        <p className="font-semibold text-white">{convo.firmTag}</p>
+                        <p className="text-sm text-slate-400">
+                          {new Date(convo._creationTime).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          })}
+                        </p>
+                      </div>
+                      <button className="text-sm text-slate-300 transition hover:text-white">View</button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </section>
