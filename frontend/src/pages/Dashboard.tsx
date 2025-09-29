@@ -20,14 +20,14 @@ export function Dashboard() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-slate-950 text-slate-100">
-      <div className="absolute inset-0">
+    <div className="relative min-h-screen bg-slate-950 text-slate-100">
+      <div className="absolute inset-0 overflow-clip">
         <div className="absolute -top-32 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-violet-500/20 blur-3xl" />
         <div className="absolute bottom-[-20%] right-[-10%] h-[540px] w-[540px] rounded-full bg-indigo-500/10 blur-3xl" />
         <div className="absolute top-1/3 left-[-15%] h-[340px] w-[340px] rounded-full bg-cyan-400/15 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-12 px-6 py-12 sm:px-10">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 py-12 sm:px-10">
         <header className="flex flex-col gap-6">
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
