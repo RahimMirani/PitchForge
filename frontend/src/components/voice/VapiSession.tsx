@@ -1,5 +1,5 @@
 import Vapi from '@vapi-ai/web';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAction } from 'convex/react';
 import { api } from '../../../../backend/convex/_generated/api';
 
@@ -21,6 +21,13 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
   const [callStatus, setCallStatus] = useState('Fetching session details...');
   const [conversation, setConversation] = useState<Message[]>([]);
   const getVapiConfig = useAction(api.voiceai.getVapiAssistantConfig);
+  const transcriptContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (transcriptContainerRef.current) {
+      transcriptContainerRef.current.scrollTop = transcriptContainerRef.current.scrollHeight;
+    }
+  }, [conversation]);
 
   useEffect(() => {
     let vapi: Vapi | null = null;
@@ -82,14 +89,29 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
           VC Persona: <span className="font-medium text-white">{selectedFirmTag}</span>
         </p>
 
-        <div className="mt-6 h-64 overflow-y-auto rounded-lg bg-slate-950/50 p-4">
-          {conversation.map((msg, index) => (
-            <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`p-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-600' : 'bg-green-600'}`}>
-                <p className="text-sm text-white">{msg.content}</p>
+        <div ref={transcriptContainerRef} className="mt-6 h-64 overflow-y-auto rounded-lg bg-slate-950/50 p-4 space-y-4">
+          {conversation.length === 0 ? (
+            <p className="text-sm text-slate-400">Waiting for transcript...</p>
+          ) : (
+            conversation.map((message, index) => (
+              <div
+                key={index}
+                className={`flex flex-col ${
+                  message.role === 'user' ? 'items-end' : 'items-start'
+                }`}
+              >
+                <div
+                  className={`max-w-xs rounded-2xl px-4 py-2.5 text-sm ${
+                    message.role === 'user'
+                      ? 'rounded-br-none bg-blue-600 text-white'
+                      : 'rounded-bl-none bg-slate-800 text-slate-200'
+                  }`}
+                >
+                  {message.content}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         <div className="mt-6 flex items-center justify-between">
