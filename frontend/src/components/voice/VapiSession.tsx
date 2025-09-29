@@ -3,6 +3,11 @@ import { useEffect, useState } from 'react';
 import { useAction } from 'convex/react';
 import { api } from '../../../../backend/convex/_generated/api';
 
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 // Replace with your Vapi Public Key
 const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY;
 
@@ -14,7 +19,7 @@ interface VapiSessionProps {
 
 export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption }: VapiSessionProps) {
   const [callStatus, setCallStatus] = useState('Fetching session details...');
-  const [transcript, setTranscript] = useState('');
+  const [conversation, setConversation] = useState<Message[]>([]);
   const getVapiConfig = useAction(api.voiceai.getVapiAssistantConfig);
 
   useEffect(() => {
@@ -44,9 +49,14 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
           onSessionEnd();
         });
 
-        vapi.on('transcript', (data) => {
-          if (data.type === 'transcript') {
-            setTranscript(data.transcript);
+        vapi.on('message', (message) => {
+          if (
+            message.type === 'transcript' &&
+            message.transcriptType === 'final'
+          ) {
+            setConversation((prev) => [...prev, { role: message.role, content: message.transcript }]);
+          } else if (message.type === 'message' && message.messageType === 'final') {
+            setConversation((prev) => [...prev, { role: message.role, content: message.message }]);
           }
         });
 
@@ -73,7 +83,13 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
         </p>
 
         <div className="mt-6 h-64 overflow-y-auto rounded-lg bg-slate-950/50 p-4">
-          <p className="text-sm text-slate-300">{transcript || 'Waiting for transcript...'}</p>
+          {conversation.map((msg, index) => (
+            <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`p-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-600' : 'bg-green-600'}`}>
+                <p className="text-sm text-white">{msg.content}</p>
+              </div>
+            </div>
+          ))}
         </div>
 
         <div className="mt-6 flex items-center justify-between">
