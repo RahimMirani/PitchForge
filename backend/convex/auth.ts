@@ -28,7 +28,7 @@ export const createAuth = (
     // Configure simple, non-verified email/password to get started
     emailAndPassword: {
       enabled: true,
-      requireEmailVerification: false,
+      requireEmailVerification: true,
     },
     plugins: [
       // The cross domain plugin is required for client side frameworks
