@@ -1,5 +1,5 @@
 import Vapi from '@vapi-ai/web';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAction, useMutation } from 'convex/react';
 import { api } from '../../../../backend/convex/_generated/api';
 
@@ -20,91 +20,105 @@ interface VapiSessionProps {
 export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption }: VapiSessionProps) {
   const [callStatus, setCallStatus] = useState('Fetching session details...');
   const [conversation, setConversation] = useState<Message[]>([]);
-  const conversationRef = useRef(conversation);
-  const vapiRef = useRef<Vapi | null>(null);
-  const getVapiConfig = useAction(api.voiceai.getVapiAssistantConfig);
-  const saveConversation = useMutation(api.voiceai.saveConversation);
+  const [vapi] = useState(() => new Vapi(VAPI_PUBLIC_KEY));
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
 
+  const getVapiConfig = useAction(api.voiceai.getVapiAssistantConfig);
+  const saveConversation = useMutation(api.voiceai.saveConversation);
+
+  // Use refs to hold the latest state and props for our event handlers.
+  // This avoids stale closures and complex dependency arrays.
+  const conversationRef = useRef(conversation);
   useEffect(() => {
     conversationRef.current = conversation;
   }, [conversation]);
 
+  const latestProps = useRef({ onSessionEnd, saveConversation, selectedFirmTag, selectedDeckOption });
   useEffect(() => {
-    let vapi: Vapi | null = null;
+    latestProps.current = { onSessionEnd, saveConversation, selectedFirmTag, selectedDeckOption };
+  }, [onSessionEnd, saveConversation, selectedFirmTag, selectedDeckOption]);
 
+  // These handlers are now stable and will not change across re-renders.
+  const onCallStartHandler = useCallback(() => setCallStatus('Connected'), []);
+
+  const onCallEndHandler = useCallback(async () => {
+    setCallStatus('Session Ended. Saving...');
+    const { onSessionEnd, saveConversation, selectedFirmTag, selectedDeckOption } = latestProps.current;
+    try {
+      if (conversationRef.current.length > 0) {
+        await saveConversation({
+          firmTag: selectedFirmTag,
+          deckId: selectedDeckOption !== 'freestyle' ? selectedDeckOption : undefined,
+          transcript: conversationRef.current,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to save conversation:', error);
+    } finally {
+      onSessionEnd();
+    }
+  }, []);
+
+  const onUnexpectedErrorHandler = useCallback((error: any) => {
+    console.error('Vapi error:', error);
+    setCallStatus('Error');
+  }, []);
+
+  const onMessageHandler = useCallback((message: any) => {
+    if (
+      (message.type === 'transcript' && message.transcriptType === 'final') ||
+      (message.type === 'message' && message.messageType === 'final')
+    ) {
+      const role = message.role;
+      const content = message.type === 'transcript' ? message.transcript : message.message;
+      setConversation((prev) => {
+        const lastMessage = prev[prev.length - 1];
+        if (lastMessage && lastMessage.role === role) {
+          const updatedConversation = [...prev];
+          updatedConversation[updatedConversation.length - 1].content += ` ${content}`;
+          return updatedConversation;
+        } else {
+          return [...prev, { role, content }];
+        }
+      });
+    }
+  }, []);
+
+  // This effect runs only once on mount to set up and tear down the call.
+  useEffect(() => {
     const runSession = async () => {
       try {
-        const config = await getVapiConfig({
-          firmTag: selectedFirmTag,
-          deckOption: selectedDeckOption,
-        });
-
+        const config = await getVapiConfig({ firmTag: latestProps.current.selectedFirmTag, deckOption: latestProps.current.selectedDeckOption });
         if (!config) {
           setCallStatus('Error: No config received');
           return;
         }
-
-        setCallStatus('Initializing call...');
-        const vapi = new Vapi(VAPI_PUBLIC_KEY);
-        vapiRef.current = vapi;
-
-        vapi.on('call-start', () => {
-          setCallStatus('Connected');
-        });
-
-        vapi.on('call-end', () => {
-          setCallStatus('Session Ended. Saving...');
-          saveConversation({
-            firmTag: selectedFirmTag,
-            deckId: selectedDeckOption !== 'freestyle' ? selectedDeckOption : undefined,
-            transcript: conversationRef.current,
-          });
-          onSessionEnd();
-        });
-
-        vapi.on('message', (message) => {
-          if (
-            (message.type === 'transcript' && message.transcriptType === 'final') ||
-            (message.type === 'message' && message.messageType === 'final')
-          ) {
-            const role = message.type === 'transcript' ? message.role : message.role;
-            const content = message.type === 'transcript' ? message.transcript : message.message;
-
-            setConversation((prev) => {
-              const lastMessage = prev[prev.length - 1];
-              if (lastMessage && lastMessage.role === role) {
-                // Append to the last message if the role is the same
-                const updatedConversation = [...prev];
-                updatedConversation[updatedConversation.length - 1].content += ` ${content}`;
-                return updatedConversation;
-              } else {
-                // Otherwise, add a new message
-                return [...prev, { role, content }];
-              }
-            });
-          }
-        });
-
-        vapi.start(config);
+        vapi.on('call-start', onCallStartHandler);
+        vapi.on('call-end', onCallEndHandler);
+        vapi.on('message', onMessageHandler);
+        vapi.on('error', onUnexpectedErrorHandler);
+        await vapi.start(config);
       } catch (error) {
         console.error('Error starting Vapi session:', error);
         setCallStatus('Error');
       }
     };
-
     runSession();
-
     return () => {
-      vapiRef.current?.stop();
+      // Bulletproof cleanup
+      vapi.off('call-start', onCallStartHandler);
+      vapi.off('call-end', onCallEndHandler);
+      vapi.off('message', onMessageHandler);
+      vapi.off('error', onUnexpectedErrorHandler);
+      vapi.stop();
     };
-  }, [selectedFirmTag, selectedDeckOption, onSessionEnd, getVapiConfig, saveConversation]);
+  }, [getVapiConfig, onCallStartHandler, onCallEndHandler, onMessageHandler, onUnexpectedErrorHandler, vapi]);
 
   const handleEndSession = () => {
-    vapiRef.current?.stop();
-    onSessionEnd(); // Ensure the modal closes immediately
+    vapi.stop();
   };
 
+  // Effect for auto-scrolling
   useEffect(() => {
     if (transcriptContainerRef.current) {
       transcriptContainerRef.current.scrollTop = transcriptContainerRef.current.scrollHeight;
@@ -118,7 +132,6 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
         <p className="mt-2 text-slate-400">
           VC Persona: <span className="font-medium text-white">{selectedFirmTag}</span>
         </p>
-
         <div ref={transcriptContainerRef} className="mt-6 h-96 space-y-4 overflow-y-auto rounded-lg bg-slate-950/50 p-4">
           {conversation.length === 0 ? (
             <p className="text-sm text-slate-400">Waiting for transcript...</p>
@@ -126,9 +139,7 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
             conversation.map((message, index) => (
               <div
                 key={index}
-                className={`flex flex-col ${
-                  message.role === 'user' ? 'items-end' : 'items-start'
-                }`}
+                className={`flex flex-col ${message.role === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
                   className={`max-w-xs rounded-2xl px-4 py-2.5 text-sm ${
@@ -143,7 +154,6 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
             ))
           )}
         </div>
-
         <div className="mt-6 flex items-center justify-between">
           <p className="text-sm font-medium">
             Status: <span className="text-yellow-400">{callStatus}</span>
