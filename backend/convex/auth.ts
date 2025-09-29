@@ -1,6 +1,6 @@
 import { createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { convex, crossDomain } from "@convex-dev/better-auth/plugins";
-import { components } from "./_generated/api";
+import { components, internal } from "./_generated/api";
 import { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 import { betterAuth } from "better-auth";
@@ -29,6 +29,16 @@ export const createAuth = (
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,
+      sendVerificationEmail: async (email, code) => {
+        await ctx.scheduler.runAfter(
+          0,
+          internal.emails.sendVerificationEmail,
+          {
+            email,
+            code,
+          },
+        );
+      },
     },
     plugins: [
       // The cross domain plugin is required for client side frameworks
