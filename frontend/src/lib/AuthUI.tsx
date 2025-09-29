@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { signInUser, signUpUser, signInWithGoogle } from "./auth-client";
+import { signInUser, signUpUser } from "./auth-client";
 
 type AuthMode = "signIn" | "signUp";
 
@@ -58,21 +58,6 @@ export function AuthUI({ isOpen, mode, onModeChange, onClose, onAuthenticated }:
     return false;
   }, [form, loading, mode]);
 
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await signInWithGoogle();
-      onAuthenticated?.("signIn");
-      onClose();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -119,44 +104,6 @@ export function AuthUI({ isOpen, mode, onModeChange, onClose, onAuthenticated }:
             ? "Welcome back! Enter your email to continue."
             : "Unlock PitchForge and start crafting your next investor-ready deck."}
         </p>
-
-        <div className="mt-6">
-          <button
-            type="button"
-            onClick={handleGoogleSignIn}
-            className="flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-800 transition hover:bg-slate-50"
-            disabled={loading}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24">
-              <path
-                fill="#4285F4"
-                d="M21.5 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.3c-.2 1.4-.9 2.6-2.1 3.4v2.7h3.5c2-1.9 3.2-4.7 3.2-8.1z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 22c2.7 0 4.9-.9 6.6-2.4l-3.5-2.7c-.9.6-2.1 1-3.1 1-2.4 0-4.4-1.6-5.1-3.8H3.4v2.8C5.1 20.1 8.3 22 12 22z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M6.9 14.1c-.2-.6-.3-1.2-.3-1.8s.1-1.3.3-1.8V7.7H3.4C2.5 9.6 2 11.7 2 14s.5 4.4 1.4 6.3l3.5-2.8z"
-              />
-              <path
-                fill="#EA4335"
-                d="M12 6.2c1.5 0 2.8.5 3.8 1.5l3.1-3.1C16.9 2.5 14.7 2 12 2 8.3 2 5.1 3.9 3.4 6.9l3.5 2.8c.7-2.2 2.7-3.8 5.1-3.5z"
-              />
-            </svg>
-            <span>Sign in with Google</span>
-          </button>
-        </div>
-
-        <div className="relative mt-6">
-          <div className="absolute inset-0 flex items-center" aria-hidden="true">
-            <div className="w-full border-t border-white/10" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-slate-900 px-2 text-slate-400">or</span>
-          </div>
-        </div>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           {mode === "signUp" && (
