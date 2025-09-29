@@ -88,6 +88,7 @@ export const saveConversation = mutation({
   },
 });
 
+
 export const getRecentConversations = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();

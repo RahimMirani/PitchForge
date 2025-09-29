@@ -40,4 +40,18 @@ export const signInUser = async (email: string, password: string) => {
   return data;
 };
 
+
+//Google Login Function
+export const signInWithGoogle = async () => {
+  const { data, error } = await authClient.signIn.social({
+    provider: "google",
+  });
+
+  if (error) {
+    throw new Error(error.message ?? "Unable to sign in with Google. Please try again.");
+  }
+
+  return data;
+};
+
 export const signOutUser = () => authClient.signOut();
