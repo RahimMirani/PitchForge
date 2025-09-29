@@ -32,7 +32,7 @@ export default defineSchema({
 
 
   // Conversations table - stores conversation history
-  conversations: defineTable({
+  Voiceconversations: defineTable({
     userId: v.string(),
     deckId: v.optional(v.string()),
     firmTag: v.string(),

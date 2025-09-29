@@ -1,4 +1,4 @@
-import { action } from "./_generated/server";
+import { action, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { api } from "./_generated/api";
 
@@ -58,5 +58,32 @@ export const getVapiAssistantConfig = action({
       },
       firstMessage: `Hi, I'm a partner from ${args.firmTag}. Nice to meet you and thanks for taking the time. Can you please let me know more about your startup?`,
     };
+  },
+});
+
+export const saveConversation = mutation({
+  args: {
+    firmTag: v.string(),
+    deckId: v.optional(v.string()),
+    transcript: v.array(
+      v.object({
+        role: v.union(v.literal("user"), v.literal("assistant")),
+        content: v.string(),
+      })
+    ),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("User is not authenticated.");
+    }
+    const userId = identity.subject;
+
+    await ctx.db.insert("Voiceconversations", {
+      userId,
+      firmTag: args.firmTag,
+      deckId: args.deckId,
+      transcript: args.transcript,
+    });
   },
 }); 
