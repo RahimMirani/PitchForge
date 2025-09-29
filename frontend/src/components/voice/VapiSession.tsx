@@ -1,6 +1,6 @@
 import Vapi from '@vapi-ai/web';
 import { useEffect, useState, useRef } from 'react';
-import { useAction } from 'convex/react';
+import { useAction, useMutation } from 'convex/react';
 import { api } from '../../../../backend/convex/_generated/api';
 
 interface Message {
@@ -20,13 +20,14 @@ interface VapiSessionProps {
 export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption }: VapiSessionProps) {
   const [callStatus, setCallStatus] = useState('Fetching session details...');
   const [conversation, setConversation] = useState<Message[]>([]);
+  const conversationRef = useRef(conversation);
+  const vapiRef = useRef<Vapi | null>(null);
   const getVapiConfig = useAction(api.voiceai.getVapiAssistantConfig);
+  const saveConversation = useMutation(api.voiceai.saveConversation);
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (transcriptContainerRef.current) {
-      transcriptContainerRef.current.scrollTop = transcriptContainerRef.current.scrollHeight;
-    }
+    conversationRef.current = conversation;
   }, [conversation]);
 
   useEffect(() => {
@@ -45,14 +46,20 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
         }
 
         setCallStatus('Initializing call...');
-        vapi = new Vapi(VAPI_PUBLIC_KEY);
+        const vapi = new Vapi(VAPI_PUBLIC_KEY);
+        vapiRef.current = vapi;
 
         vapi.on('call-start', () => {
           setCallStatus('Connected');
         });
 
         vapi.on('call-end', () => {
-          setCallStatus('Session Ended');
+          setCallStatus('Session Ended. Saving...');
+          saveConversation({
+            firmTag: selectedFirmTag,
+            deckId: selectedDeckOption !== 'freestyle' ? selectedDeckOption : undefined,
+            transcript: conversationRef.current,
+          });
           onSessionEnd();
         });
 
@@ -89,9 +96,19 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
     runSession();
 
     return () => {
-      vapi?.stop();
+      vapiRef.current?.stop();
     };
-  }, [selectedFirmTag, selectedDeckOption, onSessionEnd, getVapiConfig]);
+  }, [selectedFirmTag, selectedDeckOption, onSessionEnd, getVapiConfig, saveConversation]);
+
+  const handleEndSession = () => {
+    vapiRef.current?.stop();
+  };
+
+  useEffect(() => {
+    if (transcriptContainerRef.current) {
+      transcriptContainerRef.current.scrollTop = transcriptContainerRef.current.scrollHeight;
+    }
+  }, [conversation]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
@@ -131,7 +148,7 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
             Status: <span className="text-yellow-400">{callStatus}</span>
           </p>
           <button
-            onClick={onSessionEnd}
+            onClick={handleEndSession}
             className="rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-500"
           >
             End Session
