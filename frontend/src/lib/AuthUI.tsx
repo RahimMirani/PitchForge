@@ -105,6 +105,31 @@ export function AuthUI({ isOpen, mode, onModeChange, onClose, onAuthenticated }:
             : "Unlock PitchForge and start crafting your next investor-ready deck."}
         </p>
 
+        <div className="mt-6">
+          <button
+            type="button"
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+            disabled={loading}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M21.8 10.2c.1 1.5.1 3 0 4.6c-.1 1.6-.4 3.1-.9 4.6c-.5 1.5-1.2 2.8-2.2 4c-1.1 1.1-2.4 2-4 2.6c-1.5.6-3.1.9-4.7 1c-1.6.1-3.2.1-4.8 0c-1.6-.1-3.2-.4-4.7-1c-1.5-.6-2.9-1.4-4-2.6C1.2 21.6.5 20.3.1 18.8c-.5-1.5-.8-3.1-.9-4.6c-.1-1.6-.1-3.2 0-4.8c.1-1.6.4-3.2.9-4.7c.5-1.5 1.2-2.9 2.2-4C3.7 2.6 5.1 1.8 6.6 1.2C8.1.6 9.7.3 11.3.2c1.6-.1 3.2-.1 4.8 0c1.6.1 3.1.4 4.6.9c1.5.5 2.8 1.2 4 2.2c1.1 1.1 2 2.4 2.6 4c.6 1.5.9 3.1 1 4.7zM7.9 12.1c0-1.2.3-2.3.9-3.3c.6-1 1.4-1.7 2.4-2.2c1-.5 2.1-.7 3.2-.5c1.1.2 2.1.7 2.9 1.5c.8.8 1.3 1.8 1.5 2.9c.2 1.1 0 2.2-.5 3.2c-.5 1-1.2 1.8-2.2 2.4c-1 .6-2.1.9-3.3.9c-1.2 0-2.3-.3-3.3-.9c-1-.6-1.7-1.4-2.2-2.4c-.6-1-.8-2.1-.8-3.2zm6.3-5.2c-.4.2-.7.4-1 .7c-.3.3-.6.6-.8.9c-.2.3-.4.7-.5 1.1c-.1.4-.2.8-.2 1.2c0 .4.1.8.2 1.2c.1.4.3.8.5 1.1c.2.3.5.6.8.9c.3.3.6.5 1 .7c.4.2.8.3 1.2.3c.4 0 .8-.1 1.2-.3c.4-.2.7-.4 1-.7c.3-.3.6-.6.8-.9c.2-.3.4-.7.5-1.1c.1-.4.2-.8.2-1.2c0-.4-.1-.8-.2-1.2c-.1-.4-.3-.8-.5-1.1c-.2-.3-.5-.6-.8-.9c-.3-.3-.6-.5-1-.7c-.4-.2-.8-.3-1.2-.3c-.4 0-.8.1-1.2.3zm-7.8 7.3c.1-.1.2-.2.3-.3c.1-.1.2-.2.3-.3c.1-.1.3-.2.4-.3c.1 0 .2-.1.3-.1c.3 0 .6.1.9.1c.3.1.6.2.9.3c.3.1.6.3.8.5c.3.2.5.4.7.6c.2.2.4.5.5.7c.1.3.2.6.3.9c.1.3.1.6.1.9c0 .1 0 .2-.1.3c0 .1-.1.2-.1.3s-.1.2-.2.3c-.1.1-.2.2-.3.3c-.1.1-.2.2-.3.3c-.1.1-.3.2-.4.3c-.1 0-.2.1-.3.1c-.3 0-.6-.1-.9-.1c-.3-.1-.6-.2-.9-.3c-.3-.1-.6-.3-.8-.5c-.3-.2-.5-.4-.7-.6c-.2-.2-.4-.5-.5-.7c-.1-.3-.2-.6-.3-.9c-.1-.3-.1-.6-.1-.9c0-.1 0-.2.1-.3c0-.1.1-.2.1-.3z"
+              />
+            </svg>
+            <span>Sign in with Google</span>
+          </button>
+        </div>
+
+        <div className="relative mt-6">
+          <div className="absolute inset-0 flex items-center" aria-hidden="true">
+            <div className="w-full border-t border-white/10" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="bg-slate-900 px-2 text-slate-400">or</span>
+          </div>
+        </div>
+
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           {mode === "signUp" && (
             <div className="space-y-1">
