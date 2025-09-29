@@ -4,10 +4,11 @@ import { v } from "convex/values";
 export default defineSchema({
   // Decks table - stores pitch deck information
   decks: defineTable({
+    userId: v.string(),
     title: v.string(),
     createdAt: v.number(),
     updatedAt: v.number(),
-  }),
+  }).index("by_user", ["userId"]),
 
   // Slides table - stores individual slide content
   slides: defineTable({
@@ -29,6 +30,8 @@ export default defineSchema({
     timestamp: v.number(),
   }).index("by_deck", ["deckId"]),  // Index for fast queries by deckId
 
+
+  // Conversations table - stores conversation history
   conversations: defineTable({
     userId: v.string(),
     deckId: v.optional(v.string()),
