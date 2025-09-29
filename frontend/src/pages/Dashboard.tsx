@@ -90,7 +90,17 @@ export function Dashboard() {
           </div>
 
           <div className="flex h-full flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-            <h2 className="text-lg font-semibold text-white/90">Recent voice sessions</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-white/90">Recent voice sessions</h2>
+              {recentConversations && recentConversations.length > 0 && (
+                <button
+                  onClick={() => navigate('/practice')}
+                  className="text-sm font-semibold text-slate-300 transition hover:text-white"
+                >
+                  Start new session
+                </button>
+              )}
+            </div>
             <div className="mt-6 flex flex-1 flex-col">
               {recentConversations === undefined ? (
                 <div className="flex-1 flex items-center justify-center text-slate-400">Loading sessions...</div>
@@ -109,23 +119,26 @@ export function Dashboard() {
                   </button>
                 </div>
               ) : (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
                   {recentConversations.map((convo: Conversation) => (
                     <div
                       key={convo._id}
-                      className="flex items-center justify-between rounded-xl bg-slate-900/50 p-4"
+                      className="flex items-center justify-between rounded-lg bg-slate-900/50 px-3 py-2.5"
                     >
                       <div>
-                        <p className="font-semibold text-white">{convo.firmTag}</p>
-                        <p className="text-sm text-slate-400">
-                          {new Date(convo._creationTime).toLocaleDateString('en-US', {
-                            year: 'numeric',
+                        <p className="font-medium text-white/90">{convo.firmTag}</p>
+                        <p className="text-xs text-slate-400">
+                          {new Date(convo._creationTime).toLocaleString('en-US', {
                             month: 'long',
                             day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
                           })}
                         </p>
                       </div>
-                      <button className="text-sm text-slate-300 transition hover:text-white">View</button>
+                      <button className="text-xs font-semibold text-slate-300 transition hover:text-white">
+                        View
+                      </button>
                     </div>
                   ))}
                 </div>
