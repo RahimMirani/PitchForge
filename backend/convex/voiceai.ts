@@ -1,4 +1,4 @@
-import { action, mutation } from "./_generated/server";
+import { action, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { api } from "./_generated/api";
 
@@ -85,5 +85,27 @@ export const saveConversation = mutation({
       deckId: args.deckId,
       transcript: args.transcript,
     });
+  },
+});
+
+export const getRecentConversations = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return [];
+    }
+    const userId = identity.subject;
+
+    const conversations = await ctx.db
+      .query("Voiceconversations")
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .order("desc")
+      .take(7);
+
+    return conversations.map((c) => ({
+      _id: c._id,
+      _creationTime: c._creationTime,
+      firmTag: c.firmTag,
+    }));
   },
 }); 
