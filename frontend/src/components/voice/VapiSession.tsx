@@ -102,6 +102,7 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
 
   const handleEndSession = () => {
     vapiRef.current?.stop();
+    onSessionEnd(); // Ensure the modal closes immediately
   };
 
   useEffect(() => {
