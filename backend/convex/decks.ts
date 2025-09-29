@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { type Id } from "./_generated/dataModel";
 
 // ============================================================================
 // DECK MUTATIONS (Write Operations)
@@ -70,6 +71,35 @@ export const getDeck = query({
       .order("asc")
       .collect();
     
+    return {
+      ...deck,
+      slides,
+    };
+  },
+});
+
+export const getDeckWithSlidesByStringId = query({
+  args: { deckId: v.string() },
+  handler: async (ctx, args) => {
+    let deck;
+    try {
+      const id = args.deckId as Id<"decks">;
+      deck = await ctx.db.get(id);
+    } catch (e) {
+      console.error("Failed to get deck by string ID", e);
+      return null;
+    }
+
+    if (!deck) {
+      return null;
+    }
+
+    const slides = await ctx.db
+      .query("slides")
+      .filter((q) => q.eq(q.field("deckId"), deck._id))
+      .order("asc")
+      .collect();
+
     return {
       ...deck,
       slides,
