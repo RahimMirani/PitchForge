@@ -28,4 +28,16 @@ export default defineSchema({
     content: v.string(),
     timestamp: v.number(),
   }).index("by_deck", ["deckId"]),  // Index for fast queries by deckId
+
+  conversations: defineTable({
+    userId: v.string(),
+    deckId: v.optional(v.string()),
+    firmTag: v.string(),
+    transcript: v.array(
+      v.object({
+        role: v.union(v.literal("user"), v.literal("assistant")),
+        content: v.string(),
+      })
+    ),
+  }).index("by_userId", ["userId"]),
 }); 
