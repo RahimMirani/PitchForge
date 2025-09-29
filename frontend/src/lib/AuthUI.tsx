@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { signInUser, signUpUser } from "./auth-client";
+import { signInUser, signUpUser, signInWithGoogle } from "./auth-client";
 
 type AuthMode = "signIn" | "signUp";
 
@@ -58,6 +58,21 @@ export function AuthUI({ isOpen, mode, onModeChange, onClose, onAuthenticated }:
     return false;
   }, [form, loading, mode]);
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await signInWithGoogle();
+      onAuthenticated?.("signIn");
+      onClose();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -108,6 +123,7 @@ export function AuthUI({ isOpen, mode, onModeChange, onClose, onAuthenticated }:
         <div className="mt-6">
           <button
             type="button"
+            onClick={handleGoogleSignIn}
             className="flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-800 transition hover:bg-slate-50"
             disabled={loading}
           >
