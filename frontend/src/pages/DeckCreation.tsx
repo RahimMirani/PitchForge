@@ -20,6 +20,7 @@ export function DeckCreation() {
   })
   const [isGeneratingSlides, setIsGeneratingSlides] = useState(false)
   const [isSavingDeck, setIsSavingDeck] = useState(false)
+  const [toast, setToast] = useState<{ message: string; tone: 'success' | 'error' } | null>(null)
   const navigate = useNavigate()
   const createDeck = useMutation(api.decks.createDeck)
   const updateDeck = useMutation(api.decks.updateDeck)
@@ -40,7 +41,7 @@ export function DeckCreation() {
       setCurrentDeckId(deckId)
     } catch (error) {
       console.error('Failed to create deck:', error)
-      alert('Failed to create deck. Please try again.')
+      setToast({ message: 'Failed to create deck. Please try again.', tone: 'error' })
     } finally {
       setIsCreatingDeck(false)
     }
@@ -92,7 +93,7 @@ export function DeckCreation() {
       setActiveSlideIndex(0)
     } catch (error) {
       console.error('Failed to generate deck:', error)
-      alert('Something went wrong while generating your deck. Please try again.')
+      setToast({ message: 'Something went wrong while generating your deck. Please try again.', tone: 'error' })
     } finally {
       setIsGeneratingSlides(false)
     }
@@ -103,7 +104,7 @@ export function DeckCreation() {
 
     const trimmedTitle = deckTitle.trim()
     if (!trimmedTitle) {
-      alert('Please give your deck a title before saving.')
+      setToast({ message: 'Please give your deck a title before saving.', tone: 'error' })
       return
     }
 
@@ -113,6 +114,7 @@ export function DeckCreation() {
         deckId: currentDeckId,
         title: trimmedTitle,
       })
+      setToast({ message: 'Deck saved.', tone: 'success' })
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       if (message.includes('nonexistent document')) {
@@ -122,18 +124,25 @@ export function DeckCreation() {
           if (typeof window !== 'undefined') {
             sessionStorage.setItem('activeDeckId', newDeckId)
           }
+          setToast({ message: 'Deck was recreated and saved.', tone: 'success' })
         } catch (createError) {
           console.error('Failed to recreate deck after missing record:', createError)
-          alert('Unable to save because the deck record was missing. Please try again.')
+          setToast({ message: 'Unable to save because the deck record was missing. Please try again.', tone: 'error' })
         }
       } else {
         console.error('Failed to save deck:', error)
-        alert('Saving failed. Please try again.')
+        setToast({ message: 'Saving failed. Please try again.', tone: 'error' })
       }
     } finally {
       setIsSavingDeck(false)
     }
   }
+
+  useEffect(() => {
+    if (!toast) return
+    const timeout = window.setTimeout(() => setToast(null), 3000)
+    return () => window.clearTimeout(timeout)
+  }, [toast])
 
   // Show loading screen while creating deck
   if (!currentDeckId) {
@@ -297,6 +306,20 @@ export function DeckCreation() {
               </form>
             </div>
           )}
+        </div>
+      ) : null}
+
+      {toast ? (
+        <div className="pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
+          <div
+            className={`rounded-full px-5 py-2 text-sm font-medium shadow-xl backdrop-blur ${
+              toast.tone === 'success'
+                ? 'border border-emerald-200 bg-emerald-500/90 text-white'
+                : 'border border-rose-200 bg-rose-500/90 text-white'
+            }`}
+          >
+            {toast.message}
+          </div>
         </div>
       ) : null}
     </Layout>
