@@ -172,7 +172,7 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
                 onClick={() => setIsEditingTitle(true)}
                 className="flex h-7 w-7 items-center justify-center rounded-full border border-white/25 text-white/70 transition hover:border-white/40 hover:text-white"
               >
-                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-3.5 w-3.5" fill="black" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16.862 4.487l1.651 1.651a2 2 0 010 2.828l-8.21 8.21-3.715.413a1 1 0 01-1.106-1.106l.413-3.715 8.21-8.21a2 2 0 012.828 0z" />
                 </svg>
               </button>

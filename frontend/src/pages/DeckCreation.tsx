@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Layout } from '../components/layout/Layout'
 import { SlideNavigation } from '../components/deck/SlideNavigation'
 import { DeckCanvas } from '../components/deck/DeckCanvas'
@@ -18,8 +18,8 @@ export function DeckCreation() {
     startupName: '',
     overview: '',
   })
-  const createdDeckRef = useRef<string | null>(null)
   const [isGeneratingSlides, setIsGeneratingSlides] = useState(false)
+  const [isSavingDeck, setIsSavingDeck] = useState(false)
   const navigate = useNavigate()
   const createDeck = useMutation(api.decks.createDeck)
   const updateDeck = useMutation(api.decks.updateDeck)
@@ -98,6 +98,43 @@ export function DeckCreation() {
     }
   }
 
+  const handleSaveDeck = async () => {
+    if (!currentDeckId) return
+
+    const trimmedTitle = deckTitle.trim()
+    if (!trimmedTitle) {
+      alert('Please give your deck a title before saving.')
+      return
+    }
+
+    setIsSavingDeck(true)
+    try {
+      await updateDeck({
+        deckId: currentDeckId,
+        title: trimmedTitle,
+      })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      if (message.includes('nonexistent document')) {
+        try {
+          const newDeckId = await createDeck({ title: trimmedTitle })
+          setCurrentDeckId(newDeckId)
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('activeDeckId', newDeckId)
+          }
+        } catch (createError) {
+          console.error('Failed to recreate deck after missing record:', createError)
+          alert('Unable to save because the deck record was missing. Please try again.')
+        }
+      } else {
+        console.error('Failed to save deck:', error)
+        alert('Saving failed. Please try again.')
+      }
+    } finally {
+      setIsSavingDeck(false)
+    }
+  }
+
   // Show loading screen while creating deck
   if (!currentDeckId) {
     return (
@@ -146,8 +183,12 @@ export function DeckCreation() {
                 <button className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[11px] font-semibold text-slate-200 transition hover:border-white/25 hover:bg-white/10">
                   Export
                 </button>
-                <button className="rounded-full bg-white px-4 py-1.5 text-[11px] font-semibold text-slate-950 transition hover:bg-slate-100">
-                  Save
+                <button
+                  onClick={handleSaveDeck}
+                  disabled={isSavingDeck}
+                  className="rounded-full bg-white px-4 py-1.5 text-[11px] font-semibold text-slate-950 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isSavingDeck ? 'Saving…' : 'Save'}
                 </button>
               </div>
             </div>
