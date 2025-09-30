@@ -129,9 +129,9 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
           </div>
         </div>
 
-        <div className="flex-1 basis-0 overflow-hidden">
+        <div className="flex-1 basis-0 min-w-0 overflow-hidden">
           <div className="h-full w-full overflow-x-auto overflow-y-hidden">
-            <div className="flex min-w-max items-stretch gap-3 pr-1 pb-1">
+            <div className="flex min-w-max items-stretch gap-3 pr-4 pb-1">
               {slideTiles}
               <button
                 onClick={createNewSlide}

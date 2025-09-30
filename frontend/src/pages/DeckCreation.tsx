@@ -130,9 +130,9 @@ export function DeckCreation() {
           <div className="absolute bottom-[-25%] right-[-10%] h-[520px] w-[520px] rounded-full bg-cyan-400/15 blur-3xl" />
           <div className="absolute top-1/3 left-[-15%] h-[380px] w-[380px] rounded-full bg-fuchsia-500/10 blur-3xl" />
         </div>
-        <div className="relative flex h-full">
-          <div className="flex min-h-0 flex-1 flex-col gap-5 px-8 py-6">
-            <div className="flex items-center justify-between">
+        <div className="relative flex h-full overflow-hidden">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-5 px-8 py-6 overflow-hidden">
+            <div className="flex items-center justify-between gap-4">
               <button
                 onClick={() => navigate('/dashboard')}
                 className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-200 transition hover:border-white/25 hover:bg-white/10"
@@ -142,7 +142,7 @@ export function DeckCreation() {
                 </svg>
                 Back
               </button>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-shrink-0 items-center gap-2">
                 <button className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[11px] font-semibold text-slate-200 transition hover:border-white/25 hover:bg-white/10">
                   Export
                 </button>
@@ -159,7 +159,7 @@ export function DeckCreation() {
               onSlideSelect={setActiveSlideIndex}
             />
 
-            <div className="flex flex-1 gap-5">
+            <div className="flex flex-1 gap-5 overflow-hidden">
               <DeckCanvas
                 deckId={currentDeckId}
                 activeSlideIndex={activeSlideIndex}
