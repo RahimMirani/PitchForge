@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useMutation, useQuery } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 
 interface SlideNavigationProps {
   deckId?: string | null;
@@ -16,132 +18,38 @@ interface Slide {
 }
 
 export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSlideSelect }: SlideNavigationProps) {
-  const [slides, setSlides] = useState<Slide[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isCreatingSlide, setIsCreatingSlide] = useState(false);
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
+  const slides = useQuery(api.slides.getSlidesByDeck, deckId ? { deckId } : undefined);
+  const createSlide = useMutation(api.slides.createSlide);
+  const isLoading = Boolean(deckId) && slides === undefined;
+  const slideList = slides ?? [];
 
-  // API call function
-  const makeApiCall = async (functionName: string, args: any) => {
-    try {
-      const response = await fetch(`https://fastidious-mosquito-435.convex.cloud/api/query`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          path: functionName,
-          args: args,
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API call failed: ${response.status} ${response.statusText} - ${errorText}`);
-      }
-      
-      const result = await response.json();
-      return result.value || result;
-    } catch (error) {
-      console.error(`API call to ${functionName} failed:`, error);
-      throw error;
-    }
-  };
-
-  const makeMutationCall = async (functionName: string, args: any) => {
-    try {
-      const response = await fetch(`https://fastidious-mosquito-435.convex.cloud/api/mutation`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          path: functionName,
-          args: args,
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Mutation call failed: ${response.status} ${response.statusText} - ${errorText}`);
-      }
-      
-      const result = await response.json();
-      return result.value || result;
-    } catch (error) {
-      console.error(`Mutation call to ${functionName} failed:`, error);
-      throw error;
-    }
-  };
-
-  // Load slides when deckId changes
   useEffect(() => {
-    const loadSlides = async () => {
-      if (!deckId) {
-        setSlides([]);
-        setLastSyncedAt(null);
-        return;
-      }
+    if (!deckId) {
+      setLastSyncedAt(null);
+      return;
+    }
 
-      setIsLoading(true);
-      try {
-        const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
-        const list = result || [];
-        setSlides(list);
-        setLastSyncedAt(new Date());
-      } catch (error) {
-        console.error('Failed to load slides:', error);
-        setSlides([]);
-        setLastSyncedAt(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadSlides();
-  }, [deckId]);
-
-  // Auto-refresh slides every 2 seconds when deck is active (for real-time updates)
-  useEffect(() => {
-    if (!deckId) return;
-
-    const interval = setInterval(async () => {
-      try {
-        const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
-        const list = result || [];
-        setSlides(list);
-        setLastSyncedAt(new Date());
-      } catch (error) {
-        // Silently fail for background updates
-      }
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [deckId]);
+    if (slideList.length > 0 || slides?.length === 0) {
+      setLastSyncedAt(new Date());
+    }
+  }, [deckId, slideList, slides]);
 
   const createNewSlide = async () => {
     if (!deckId || isCreatingSlide) {
       return;
     }
-    
     setIsCreatingSlide(true);
     try {
-      const slideId = await makeMutationCall('slides:createSlide', {
-        deckId: deckId,
-        title: `New Slide ${slides.length + 1}`,
+      await createSlide({
+        deckId,
+        title: `New Slide ${slideList.length + 1}`,
         content: 'Click edit to add content to this slide.',
       });
-
-      // Refresh slides to show the new slide
-      const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
-      const list = result || [];
-      setSlides(list);
       setLastSyncedAt(new Date());
-      
-      // Select the new slide (it will be the last one)
-      const newSlideIndex = (result?.length || 1) - 1;
+      const newSlideIndex = slideList.length;
       onSlideSelect?.(newSlideIndex);
-      
     } catch (error) {
       console.error('Failed to create slide:', error);
       alert('Failed to create slide. Please try again.');
@@ -166,8 +74,8 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
 
   const slideTiles = isLoading
     ? renderSkeletons()
-    : slides.length > 0
-      ? slides.map((slide, index) => {
+    : slideList.length > 0
+      ? slideList.map((slide, index) => {
           const isActive = index === activeSlideIndex
 
           return (
@@ -216,7 +124,7 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
             {deckTitle}
           </h1>
           <div className="mt-1 space-y-1 text-[11px] uppercase tracking-[0.28em] text-slate-300">
-            <span className="block">{slides.length} slides</span>
+            <span className="block">{slideList.length} slides</span>
             <span className="block text-slate-400/80">Synced {formattedSyncedAt}</span>
           </div>
         </div>

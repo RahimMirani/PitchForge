@@ -4,6 +4,8 @@ import { SlideNavigation } from '../components/deck/SlideNavigation'
 import { DeckCanvas } from '../components/deck/DeckCanvas'
 import { ChatSidebar } from '../components/chat/ChatSidebar'
 import { useNavigate } from 'react-router-dom'
+import { useMutation } from 'convex/react'
+import { api } from '../../convex/_generated/api'
 
 export function DeckCreation() {
   const [currentDeckId, setCurrentDeckId] = useState<string | null>(null)
@@ -11,6 +13,8 @@ export function DeckCreation() {
   const [deckTitle, setDeckTitle] = useState('')
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
   const navigate = useNavigate()
+  const createDeck = useMutation(api.decks.createDeck)
+
   // Create a new deck
   const createNewDeck = async () => {
     if (!deckTitle.trim()) {
@@ -20,26 +24,10 @@ export function DeckCreation() {
     setIsCreatingDeck(true)
     
     try {
-      const response = await fetch('https://fastidious-mosquito-435.convex.cloud/api/mutation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          path: 'decks:createDeck',
-          args: {
-            title: deckTitle.trim() || 'My Pitch Deck'
-          },
-        }),
+      const deckId = await createDeck({
+        title: deckTitle.trim() || 'My Pitch Deck',
       })
-      
-      if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(`Failed to create deck: ${response.status} ${response.statusText} - ${errorText}`)
-      }
-      
-      const result = await response.json()
-      setCurrentDeckId(result.value || result)
+      setCurrentDeckId(deckId)
     } catch (error) {
       console.error('Failed to create deck:', error)
       alert('Failed to create deck. Please try again.')

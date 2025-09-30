@@ -33,12 +33,23 @@ export const createSlide = mutation({
 export const updateSlide = mutation({
   args: {
     slideId: v.id("slides"),
-    content: v.string(),
+    title: v.optional(v.string()),
+    content: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    await ctx.db.patch(args.slideId, {
-      content: args.content,
-    });
+    const updates: { title?: string; content?: string } = {};
+    if (args.title !== undefined) {
+      updates.title = args.title;
+    }
+    if (args.content !== undefined) {
+      updates.content = args.content;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return;
+    }
+
+    await ctx.db.patch(args.slideId, updates);
   },
 });
 

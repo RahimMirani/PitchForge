@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useMutation, useQuery } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 
 interface DeckCanvasProps {
   deckId?: string | null;
@@ -13,106 +15,16 @@ interface Slide {
 }
 
 export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
-  const [slides, setSlides] = useState<Slide[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-
-  // API call functions
-  const makeApiCall = async (functionName: string, args: any) => {
-    try {
-      const response = await fetch(`https://fastidious-mosquito-435.convex.cloud/api/query`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          path: functionName,
-          args: args,
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API call failed: ${response.status} ${response.statusText} - ${errorText}`);
-      }
-      
-      const result = await response.json();
-      return result.value || result;
-    } catch (error) {
-      console.error(`API call to ${functionName} failed:`, error);
-      throw error;
-    }
-  };
-
-  const makeMutationCall = async (functionName: string, args: any) => {
-    try {
-      const response = await fetch(`https://fastidious-mosquito-435.convex.cloud/api/mutation`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          path: functionName,
-          args: args,
-        }),
-      });
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Mutation call failed: ${response.status} ${response.statusText} - ${errorText}`);
-      }
-      
-      const result = await response.json();
-      return result.value || result;
-    } catch (error) {
-      console.error(`Mutation call to ${functionName} failed:`, error);
-      throw error;
-    }
-  };
-
-  // Load slides when deckId changes
-  useEffect(() => {
-    const loadSlides = async () => {
-      if (!deckId) {
-        setSlides([]);
-        return;
-      }
-      
-      setIsLoading(true);
-      try {
-        const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
-        setSlides(result || []);
-      } catch (error) {
-        console.error('Failed to load slides:', error);
-        setSlides([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    loadSlides();
-  }, [deckId]);
-
-  // Auto-refresh slides every 3 seconds for real-time updates
-  useEffect(() => {
-    if (!deckId || isEditing) return; // Don't refresh while editing
-    
-    const interval = setInterval(async () => {
-      try {
-        const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
-        setSlides(result || []);
-      } catch (error) {
-        // Silently fail for background updates
-      }
-    }, 3000);
-    
-    return () => clearInterval(interval);
-  }, [deckId, isEditing]);
-
-  const currentSlide = slides[activeSlideIndex];
+  const slides = useQuery(api.slides.getSlidesByDeck, deckId ? { deckId } : undefined);
+  const updateSlide = useMutation(api.slides.updateSlide);
+  const deleteSlideMutation = useMutation(api.slides.deleteSlide);
+  const slideList = slides ?? [];
+  const isLoading = Boolean(deckId) && slides === undefined;
+  const currentSlide = slideList[activeSlideIndex];
 
   const startEditing = () => {
     if (currentSlide) {
@@ -129,22 +41,25 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
   };
 
   const saveSlide = async () => {
-    if (!currentSlide || !deckId) return;
-    
+    if (!currentSlide) return;
+
     setIsSaving(true);
     try {
-      await makeMutationCall('slides:updateSlide', {
-        slideId: currentSlide._id,
-        content: editContent,
-      });
+      const updates: { title?: string; content?: string } = {};
+      if (editTitle !== currentSlide.title) {
+        updates.title = editTitle;
+      }
+      if (editContent !== currentSlide.content) {
+        updates.content = editContent;
+      }
 
-      // If title changed, we need a separate update (if we add title update to the mutation)
-      // For now, we'll just update content
+      if (Object.keys(updates).length > 0) {
+        await updateSlide({
+          slideId: currentSlide._id,
+          ...updates,
+        });
+      }
 
-      // Refresh slides to show updated content
-      const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
-      setSlides(result || []);
-      
       setIsEditing(false);
       setEditTitle('');
       setEditContent('');
@@ -157,19 +72,15 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
   };
 
   const deleteSlide = async () => {
-    if (!currentSlide || !deckId) return;
-    
+    if (!currentSlide) return;
+
     const confirmDelete = window.confirm(`Are you sure you want to delete "${currentSlide.title}"?`);
     if (!confirmDelete) return;
-    
+
     try {
-      await makeMutationCall('slides:deleteSlide', {
+      await deleteSlideMutation({
         slideId: currentSlide._id,
       });
-
-      // Refresh slides
-      const result = await makeApiCall('slides:getSlidesByDeck', { deckId });
-      setSlides(result || []);
     } catch (error) {
       console.error('Failed to delete slide:', error);
       alert('Failed to delete slide. Please try again.');
@@ -181,12 +92,12 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
       <div className="flex items-center justify-between border-b border-white/15 px-5 py-3 backdrop-blur">
         <div>
           <span className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
-            {slides.length > 0 ? `Slide ${activeSlideIndex + 1}` : 'No slides yet'}
+            {slideList.length > 0 ? `Slide ${activeSlideIndex + 1}` : 'No slides yet'}
           </span>
           <h3 className="mt-1 text-[26px] font-semibold leading-tight text-slate-900">
             {currentSlide ? currentSlide.title : 'Select or compose a slide'}
           </h3>
-          {slides.length === 0 && (
+          {slideList.length === 0 && (
             <p className="text-sm text-slate-500">Start crafting your story with AI support.</p>
           )}
         </div>

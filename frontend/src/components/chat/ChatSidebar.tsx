@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useQuery, useAction, useMutation } from 'convex/react';
+import { useEffect, useState } from 'react';
+import { useAction, useMutation, useQuery } from 'convex/react';
+import { api } from '../../../convex/_generated/api';
 
 interface ChatSidebarProps {
   deckId: string | null;
@@ -21,118 +22,48 @@ const suggestedPrompts = [
 export function ChatSidebar({ deckId }: ChatSidebarProps) {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const messages = useQuery(api.messages.getMessages, deckId ? { deckId } : undefined);
+  const sendMessage = useMutation(api.messages.sendMessage);
+  const chatWithAI = useAction(api.ai.chatWithAI);
+  const messageList = messages ?? [];
+  const [queuedPrompt, setQueuedPrompt] = useState<string | null>(null);
 
-  // Manual API calls to your Convex backend
-  const makeApiCall = async (functionName: string, args: any) => {
-    try {
-      const response = await fetch(`https://fastidious-mosquito-435.convex.cloud/api/query`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          path: functionName,
-          args: args,
-        }),
-      })
-      
-      if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(`API call failed: ${response.status} ${response.statusText} - ${errorText}`)
-      }
-      
-      const result = await response.json()
-      return result.value || result
-    } catch (error) {
-      console.error(`API call to ${functionName} failed:`, error)
-      throw error
-    }
-  }
-
-  const makeActionCall = async (functionName: string, args: any) => {
-    try {
-      const response = await fetch(`https://fastidious-mosquito-435.convex.cloud/api/action`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          path: functionName,
-          args: args,
-        }),
-      })
-      
-      if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(`Action call failed: ${response.status} ${response.statusText} - ${errorText}`)
-      }
-      
-      const result = await response.json()
-      return result.value || result
-    } catch (error) {
-      console.error(`Action call to ${functionName} failed:`, error)
-      throw error
-    }
-  }
-
-  // Load messages when deckId changes
   useEffect(() => {
-    const loadMessages = async () => {
-      if (!deckId) return;
-      
-      try {
-        const result = await makeApiCall('messages:getMessages', { deckId });
-        setMessages(result);
-      } catch (error) {
-        console.error('Failed to load messages:', error);
-      }
-    };
-    
-    loadMessages();
-  }, [deckId]);
+    if (!queuedPrompt || isLoading) return;
+    const nextPrompt = queuedPrompt;
+    setQueuedPrompt(null);
+    void (async () => {
+      setInputMessage(nextPrompt);
+      await handleSendMessage(nextPrompt);
+    })();
+  }, [queuedPrompt, isLoading]);
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim() || !deckId || isLoading) return;
-    
-    const messageToSend = inputMessage.trim();
-    setInputMessage(''); // Clear input immediately
+  const handleSendMessage = async (messageOverride?: string) => {
+    const messageToSend = (messageOverride ?? inputMessage).trim();
+    if (!messageToSend || !deckId || isLoading) return;
+
+    if (!messageOverride) {
+      setInputMessage('');
+    }
     setIsLoading(true);
-    
-    // Add user message immediately for better UX
-    const userMessage: Message = {
-      _id: `temp-${Date.now()}`,
-      role: 'user',
-      content: messageToSend,
-      timestamp: Date.now(),
-    };
-    setMessages(prev => [...prev, userMessage]);
-    
+
     try {
-      // Call the AI chat function (this is an action)
-      const result = await makeActionCall('ai:chatWithAI', {
+      await sendMessage({
+        deckId,
+        role: 'user',
+        content: messageToSend,
+      });
+
+      await chatWithAI({
         deckId,
         userMessage: messageToSend,
       });
-      
-      // Reload messages to get the actual conversation (this is a query)
-      const updatedMessages = await makeApiCall('messages:getMessages', { deckId });
-      setMessages(updatedMessages);
-      
     } catch (error) {
       console.error('Failed to send message:', error);
-      // Remove the optimistic message and restore input
-      setMessages(prev => prev.filter(msg => msg._id !== userMessage._id));
-      setInputMessage(messageToSend);
-      
-      // Show error message
-      const errorMessage: Message = {
-        _id: `error-${Date.now()}`,
-        role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.',
-        timestamp: Date.now(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
+      if (!messageOverride) {
+        setInputMessage(messageToSend);
+      }
+      alert('Failed to send message. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -147,10 +78,8 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
 
   const handleQuickAction = (message: string) => {
     if (!deckId || isLoading) return;
-    
-    // Set the input and trigger send
-    setInputMessage(message);
-    setTimeout(() => handleSendMessage(), 100);
+
+    setQueuedPrompt(message);
   };
 
   return (
@@ -175,8 +104,8 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
       </div>
 
       <div className="flex-1 space-y-4 overflow-y-auto px-6 py-5">
-        {messages.length > 0 ? (
-          messages.map((message) => (
+        {messageList.length > 0 ? (
+          messageList.map((message) => (
             <div
               key={message._id}
               className={`group relative max-w-[92%] rounded-2xl border px-4 py-3 text-sm leading-relaxed shadow-sm ${
