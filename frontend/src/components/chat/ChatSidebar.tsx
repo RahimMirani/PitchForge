@@ -23,7 +23,6 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messages = useQuery(api.messages.getMessages, deckId ? { deckId } : undefined);
-  const sendMessage = useMutation(api.messages.sendMessage);
   const chatWithAI = useAction(api.ai.chatWithAI);
   const messageList = messages ?? [];
   const [queuedPrompt, setQueuedPrompt] = useState<string | null>(null);
@@ -48,12 +47,6 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
     setIsLoading(true);
 
     try {
-      await sendMessage({
-        deckId,
-        role: 'user',
-        content: messageToSend,
-      });
-
       await chatWithAI({
         deckId,
         userMessage: messageToSend,
@@ -180,7 +173,7 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
                     className="flex-1 resize-none bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none disabled:opacity-50"
                   />
                   <button
-                    onClick={handleSendMessage}
+                    onClick={() => handleSendMessage()}
                     disabled={!inputMessage.trim() || isLoading}
                     className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[var(--color-aqua)] to-[var(--color-violet)] text-white shadow-[0_18px_45px_rgba(97,81,255,0.35)] transition hover:shadow-[0_22px_55px_rgba(97,81,255,0.45)] disabled:cursor-not-allowed disabled:opacity-50"
                   >
