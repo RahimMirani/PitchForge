@@ -149,4 +149,94 @@ Be concise, actionable, and focus on what investors want to see.`,
       };
     }
   },
+});
+
+export const generateDeckFromBrief = action({
+  args: {
+    deckId: v.id("decks"),
+    title: v.string(),
+    startupName: v.string(),
+    overview: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const planningPrompt = `You are an expert pitch deck strategist.
+
+Startup name: ${args.startupName}
+Pitch deck title: ${args.title}
+Overview: ${args.overview}
+
+Design a compelling investor deck outline tailored to this startup.
+- Generate between 8 and 10 slides depending on what best communicates the story.
+- Prioritise clarity, momentum, and investor expectations (Problem, Solution, Market, Product, Traction, Business Model, Competition, Team, Roadmap, Ask, etc.).
+- For each slide, create a strong title and punchy narrative copy with crisp bullet-style sentences (separated by newline characters).
+- Narrative should avoid markdown bullets, just start each sentence with a dash (e.g. "- Growing ARR 40% QoQ").
+
+Respond strictly as minified JSON with this schema:
+{"slides":[{"title":"string","content":"string"},...]}
+The content string should keep newline-separated dash bullets.
+Do not include any commentary outside the JSON.`;
+
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "You transform startup briefs into succinct, investor-ready slide outlines.",
+          },
+          {
+            role: "user",
+            content: planningPrompt,
+          },
+        ],
+        temperature: 0.4,
+        max_tokens: 900,
+      });
+
+      const rawContent = response.choices[0]?.message?.content ?? "";
+      const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error("Failed to parse slide plan from model response");
+      }
+
+      let plan: { slides?: Array<{ title: string; content: string }> };
+      try {
+        plan = JSON.parse(jsonMatch[0]);
+      } catch (error) {
+        console.error("JSON parse error from generateDeckFromBrief", rawContent, error);
+        throw new Error("Invalid slide plan format");
+      }
+
+      const slides = plan.slides?.filter(
+        (slide) =>
+          slide?.title &&
+          slide?.content &&
+          typeof slide.title === "string" &&
+          typeof slide.content === "string"
+      );
+
+      if (!slides || slides.length === 0) {
+        throw new Error("The generated plan did not include any slides");
+      }
+
+      const createdSlides: string[] = [];
+      for (const slide of slides) {
+        const slideId = await ctx.runMutation(api.slides.createSlide, {
+          deckId: args.deckId,
+          title: slide.title.trim().slice(0, 120),
+          content: slide.content.trim(),
+        });
+        createdSlides.push(slideId);
+      }
+
+      return {
+        success: true,
+        slideCount: createdSlides.length,
+        slideIds: createdSlides,
+      };
+    } catch (error) {
+      console.error("generateDeckFromBrief failed", error);
+      throw error;
+    }
+  },
 }); 

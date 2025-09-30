@@ -4,7 +4,7 @@ import { SlideNavigation } from '../components/deck/SlideNavigation'
 import { DeckCanvas } from '../components/deck/DeckCanvas'
 import { ChatSidebar } from '../components/chat/ChatSidebar'
 import { useNavigate } from 'react-router-dom'
-import { useMutation } from 'convex/react'
+import { useAction, useMutation } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 
 export function DeckCreation() {
@@ -18,8 +18,11 @@ export function DeckCreation() {
     startupName: '',
     overview: '',
   })
+  const [isGeneratingSlides, setIsGeneratingSlides] = useState(false)
   const navigate = useNavigate()
   const createDeck = useMutation(api.decks.createDeck)
+  const updateDeck = useMutation(api.decks.updateDeck)
+  const generateDeck = useAction(api.ai.generateDeckFromBrief)
 
   // Create a new deck
   const createNewDeck = async () => {
@@ -54,9 +57,34 @@ export function DeckCreation() {
     setIsOnboardingOpen(true)
   }
 
-  const handleOnboardingSubmit = (data: typeof deckContext) => {
+  const handleOnboardingSubmit = async (data: typeof deckContext) => {
+    if (!currentDeckId) return
+
     setDeckContext(data)
-    setIsOnboardingOpen(false)
+    setIsGeneratingSlides(true)
+
+    try {
+      await updateDeck({
+        deckId: currentDeckId,
+        title: data.title,
+      })
+      setDeckTitle(data.title)
+
+      await generateDeck({
+        deckId: currentDeckId,
+        title: data.title,
+        startupName: data.startupName,
+        overview: data.overview,
+      })
+
+      setIsOnboardingOpen(false)
+      setActiveSlideIndex(0)
+    } catch (error) {
+      console.error('Failed to generate deck:', error)
+      alert('Something went wrong while generating your deck. Please try again.')
+    } finally {
+      setIsGeneratingSlides(false)
+    }
   }
 
   // Show loading screen while creating deck
@@ -133,73 +161,89 @@ export function DeckCreation() {
           </div>
         </div>
       </div>
-      {isOnboardingOpen ? (
+      {(isOnboardingOpen || isGeneratingSlides) ? (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl bg-white p-8 shadow-2xl">
-            <h2 className="text-2xl font-semibold text-slate-900">Let’s get your deck started</h2>
-            <p className="mt-2 text-sm text-slate-500">
-              Give us a few details so the copilot can tailor your slides.
-            </p>
-            <form
-              className="mt-6 space-y-5"
-              onSubmit={(event) => {
-                event.preventDefault()
-                const formData = new FormData(event.currentTarget)
-                handleOnboardingSubmit({
-                  title: (formData.get('title') as string) ?? '',
-                  startupName: (formData.get('startupName') as string) ?? '',
-                  overview: (formData.get('overview') as string) ?? '',
-                })
-              }}
-            >
-              <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Deck title</label>
-                <input
-                  name="title"
-                  defaultValue={deckContext.title}
-                  placeholder="Example: Seed Round Pitch"
-                  className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-[var(--color-violet)] focus:outline-none focus:ring-2 focus:ring-[var(--color-violet)]/20"
-                  required
-                />
+          {isGeneratingSlides ? (
+            <div className="flex flex-col items-center gap-4 rounded-3xl bg-white/95 px-12 py-14 text-center shadow-2xl">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--color-violet)]/30 bg-[var(--color-violet)]/12">
+                <svg className="h-6 w-6 animate-spin text-[var(--color-violet)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
               </div>
               <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Startup name</label>
-                <input
-                  name="startupName"
-                  defaultValue={deckContext.startupName}
-                  placeholder="Example: PitchForge"
-                  className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-[var(--color-violet)] focus:outline-none focus:ring-2 focus:ring-[var(--color-violet)]/20"
-                  required
-                />
+                <h3 className="text-xl font-semibold text-slate-900">Summoning your slides…</h3>
+                <p className="mt-2 text-sm text-slate-500">The copilot is sculpting an investor-ready outline based on your brief.</p>
               </div>
-              <div>
-                <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Startup overview</label>
-                <textarea
-                  name="overview"
-                  defaultValue={deckContext.overview}
-                  placeholder="Give a short description of your solution, audience, and traction."
-                  rows={4}
-                  className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-[var(--color-violet)] focus:outline-none focus:ring-2 focus:ring-[var(--color-violet)]/20"
-                  required
-                />
-              </div>
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsOnboardingOpen(false)}
-                  className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
-                >
-                  Not now
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-full bg-[var(--color-violet)] px-5 py-2 text-sm font-semibold text-white shadow-[0_18px_45px_rgba(97,81,255,0.35)] transition hover:bg-[var(--color-violet)]/90"
-                >
-                  Continue
-                </button>
-              </div>
-            </form>
-          </div>
+            </div>
+          ) : (
+            <div className="w-full max-w-lg rounded-3xl bg-white p-8 shadow-2xl">
+              <h2 className="text-2xl font-semibold text-slate-900">Let’s get your deck started</h2>
+              <p className="mt-2 text-sm text-slate-500">
+                Give us a few details so the copilot can tailor your slides.
+              </p>
+              <form
+                className="mt-6 space-y-5"
+                onSubmit={(event) => {
+                  event.preventDefault()
+                  const formData = new FormData(event.currentTarget)
+                  handleOnboardingSubmit({
+                    title: (formData.get('title') as string) ?? '',
+                    startupName: (formData.get('startupName') as string) ?? '',
+                    overview: (formData.get('overview') as string) ?? '',
+                  })
+                }}
+              >
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Deck title</label>
+                  <input
+                    name="title"
+                    defaultValue={deckContext.title}
+                    placeholder="Example: Seed Round Pitch"
+                    className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-[var(--color-violet)] focus:outline-none focus:ring-2 focus:ring-[var(--color-violet)]/20"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Startup name</label>
+                  <input
+                    name="startupName"
+                    defaultValue={deckContext.startupName}
+                    placeholder="Example: PitchForge"
+                    className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-[var(--color-violet)] focus:outline-none focus:ring-2 focus:ring-[var(--color-violet)]/20"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Startup overview</label>
+                  <textarea
+                    name="overview"
+                    defaultValue={deckContext.overview}
+                    placeholder="Give a short description of your solution, audience, and traction."
+                    rows={4}
+                    className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-[var(--color-violet)] focus:outline-none focus:ring-2 focus:ring-[var(--color-violet)]/20"
+                    required
+                  />
+                </div>
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsOnboardingOpen(false)}
+                    className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
+                    disabled={isGeneratingSlides}
+                  >
+                    Not now
+                  </button>
+                  <button
+                    type="submit"
+                    className="rounded-full bg-[var(--color-violet)] px-5 py-2 text-sm font-semibold text-white shadow-[0_18px_45px_rgba(97,81,255,0.35)] transition hover:bg-[var(--color-violet)]/90 disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={isGeneratingSlides}
+                  >
+                    Continue
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       ) : null}
     </Layout>
