@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Layout } from '../components/layout/Layout'
 import { SlideNavigation } from '../components/deck/SlideNavigation'
 import { DeckCanvas } from '../components/deck/DeckCanvas'
@@ -18,6 +18,7 @@ export function DeckCreation() {
     startupName: '',
     overview: '',
   })
+  const createdDeckRef = useRef<string | null>(null)
   const [isGeneratingSlides, setIsGeneratingSlides] = useState(false)
   const navigate = useNavigate()
   const createDeck = useMutation(api.decks.createDeck)
@@ -45,13 +46,23 @@ export function DeckCreation() {
     }
   }
 
-  // Auto-create a deck when component loads
   useEffect(() => {
-    if (!currentDeckId) {
+    if (typeof window === 'undefined') return
+    const storedId = sessionStorage.getItem('activeDeckId')
+    if (storedId) {
+      setCurrentDeckId(storedId)
+    } else {
       setDeckTitle('My Startup Pitch')
-      createNewDeck()
+      void createNewDeck()
     }
   }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (currentDeckId) {
+      sessionStorage.setItem('activeDeckId', currentDeckId)
+    }
+  }, [currentDeckId])
 
   const handleStartDeck = () => {
     setIsOnboardingOpen(true)
