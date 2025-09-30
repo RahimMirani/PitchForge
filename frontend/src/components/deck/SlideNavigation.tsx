@@ -58,7 +58,7 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
     }
   };
 
-  const tileBase = 'h-[104px] w-[168px]'
+  const tileBase = 'h-[118px] w-[150px]'
 
   const renderSkeletons = () =>
     Array.from({ length: 3 }).map((_, index) => (
@@ -82,34 +82,34 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
             <button
               key={slide._id}
               onClick={() => onSlideSelect?.(index)}
-              className={`group relative ${tileBase} shrink-0 overflow-hidden rounded-2xl border px-4 py-3 text-left transition-all duration-200 backdrop-blur ${
+              className={`group relative h-[118px] w-[150px] shrink-0 overflow-hidden rounded-xl border px-4 py-4 text-left transition-all duration-200 backdrop-blur ${
                 isActive
-                  ? 'border-white/45 bg-white/90 shadow-[0_16px_40px_rgba(8,15,31,0.24)]'
-                  : 'border-white/15 bg-white/65 hover:border-white/35 hover:bg-white/80 hover:shadow-[0_14px_34px_rgba(8,15,31,0.18)]'
+                  ? 'border-white/45 bg-white/95 shadow-[0_16px_40px_rgba(8,15,31,0.24)]'
+                  : 'border-white/15 bg-white/70 hover:border-white/35 hover:bg-white/80 hover:shadow-[0_12px_28px_rgba(8,15,31,0.18)]'
               }`}
             >
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/45 via-white/10 to-transparent opacity-60" />
-              <div className="relative flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.36em] text-slate-500">
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/30 bg-white text-[var(--color-violet)]">
+              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-400">
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-md border border-white/40 bg-white text-[var(--color-violet)]">
                   {index + 1}
                 </span>
+                <span className="truncate text-slate-500">Slide</span>
               </div>
-              <div className="relative mt-3 space-y-2">
-                <p className={`text-sm font-semibold leading-snug ${isActive ? 'text-slate-900' : 'text-slate-600 group-hover:text-slate-900'}`}>
+              <div className="relative mt-2 space-y-1">
+                <p className={`truncate text-sm font-semibold leading-snug ${isActive ? 'text-slate-900' : 'text-slate-600 group-hover:text-slate-900'}`}>
                   {slide.title}
                 </p>
-                <p className="text-[11px] text-slate-500/80 line-clamp-2">
-                  {slide.content ? slide.content.slice(0, 70) + (slide.content.length > 70 ? '…' : '') : 'Tap to craft details'}
+                <p className="line-clamp-3 text-[11px] leading-snug text-slate-500/80">
+                  {slide.content ? slide.content.replace(/\n+/g, ' • ').slice(0, 110) : 'Tap to add details'}
                 </p>
               </div>
               {isActive ? (
-                <span className="absolute inset-x-5 bottom-2 h-0.5 rounded-full bg-gradient-to-r from-[var(--color-violet)] via-[var(--color-aqua)] to-[var(--color-violet)]" />
+                <span className="absolute inset-x-3 bottom-2 h-0.5 rounded-full bg-gradient-to-r from-[var(--color-violet)] via-[var(--color-aqua)] to-[var(--color-violet)]" />
               ) : null}
             </button>
           )
         })
       : (
-        <div className={`${tileBase} flex shrink-0 flex-col items-center justify-center rounded-2xl border border-dashed border-white/30 bg-white/55 text-center text-[12px] text-slate-500 backdrop-blur`}
+        <div className={`${tileBase} flex shrink-0 flex-col items-center justify-center rounded-xl border border-dashed border-white/30 bg-white/65 text-center text-[12px] text-slate-500 backdrop-blur`}
         >
           <span className="mb-1 text-[var(--color-violet)] font-semibold">No slides yet</span>
           Ask the copilot to draft your opener.
@@ -136,7 +136,7 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
               <button
                 onClick={createNewSlide}
                 disabled={!deckId || isCreatingSlide}
-                className={`${tileBase} shrink-0 rounded-2xl border border-dashed border-white/35 bg-white/55 text-sm font-semibold text-[var(--color-violet)] transition-all duration-200 hover:border-white/50 hover:bg-white/70 disabled:cursor-not-allowed disabled:opacity-50`}
+                className={`${tileBase} shrink-0 rounded-xl border border-dashed border-white/35 bg-white/70 text-sm font-semibold text-[var(--color-violet)] transition-all duration-200 hover:border-white/50 hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-50`}
               >
                 <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full border border-white/35 bg-white/70">
                   {isCreatingSlide ? (
