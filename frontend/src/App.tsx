@@ -3,7 +3,6 @@ import { Landing } from './pages/Landing'
 import { Dashboard } from './pages/Dashboard'
 import { VoicePractice } from './pages/VoicePractice'
 import { DeckCreation } from './pages/DeckCreation'
-import VerifyEmailPage from './pages/VerifyEmail'
 import './App.css'
 import { AuthRoute } from './lib/authroute'
 import { PublicRoute } from './lib/PublicRoute'
@@ -18,14 +17,6 @@ function App() {
           element={
             <PublicRoute>
               <Landing />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/verify-email"
-          element={
-            <PublicRoute>
-              <VerifyEmailPage />
             </PublicRoute>
           }
         />
