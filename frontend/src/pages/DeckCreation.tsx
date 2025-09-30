@@ -157,6 +157,7 @@ export function DeckCreation() {
               deckTitle={deckTitle || 'Untitled Deck'}
               activeSlideIndex={activeSlideIndex}
               onSlideSelect={setActiveSlideIndex}
+              onRenameDeck={(title) => setDeckTitle(title)}
             />
 
             <div className="flex flex-1 gap-5 overflow-hidden">

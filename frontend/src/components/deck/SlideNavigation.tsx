@@ -7,6 +7,7 @@ interface SlideNavigationProps {
   deckTitle: string;
   activeSlideIndex?: number;
   onSlideSelect?: (index: number) => void;
+  onRenameDeck?: (title: string) => void;
 }
 
 interface Slide {
@@ -17,9 +18,11 @@ interface Slide {
   createdAt?: number;
 }
 
-export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSlideSelect }: SlideNavigationProps) {
+export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSlideSelect, onRenameDeck }: SlideNavigationProps) {
   const [isCreatingSlide, setIsCreatingSlide] = useState(false);
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [draftTitle, setDraftTitle] = useState(deckTitle);
   const slides = useQuery(api.slides.getSlidesByDeck, deckId ? { deckId } : undefined);
   const createSlide = useMutation(api.slides.createSlide);
   const isLoading = Boolean(deckId) && slides === undefined;
@@ -35,6 +38,28 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
       setLastSyncedAt(new Date());
     }
   }, [deckId, slideList, slides]);
+
+  useEffect(() => {
+    setDraftTitle(deckTitle);
+  }, [deckTitle]);
+
+  const commitTitleChange = (commit: boolean) => {
+    if (!commit) {
+      setDraftTitle(deckTitle);
+      setIsEditingTitle(false);
+      return;
+    }
+
+    const trimmed = draftTitle.trim();
+    if (!trimmed || trimmed === deckTitle) {
+      setDraftTitle(deckTitle);
+      setIsEditingTitle(false);
+      return;
+    }
+
+    onRenameDeck?.(trimmed);
+    setIsEditingTitle(false);
+  };
 
   const createNewSlide = async () => {
     if (!deckId || isCreatingSlide) {
@@ -120,9 +145,39 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
     <div className="w-full overflow-hidden rounded-2xl bg-white/6 px-4 py-3 backdrop-blur">
       <div className="flex h-full items-start gap-5">
         <div className="flex-shrink-0 pr-4">
-          <h1 className="text-lg font-semibold text-white">
-            {deckTitle}
-          </h1>
+          {isEditingTitle ? (
+            <input
+              autoFocus
+              value={draftTitle}
+              onChange={(event) => setDraftTitle(event.target.value)}
+              onBlur={() => commitTitleChange(true)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  commitTitleChange(true);
+                }
+                if (event.key === 'Escape') {
+                  event.preventDefault();
+                  commitTitleChange(false);
+                }
+              }}
+              className="w-[220px] rounded-md border border-white/25 bg-white/95 px-3 py-1 text-sm font-semibold text-slate-900 focus:border-[var(--color-violet)] focus:outline-none focus:ring-2 focus:ring-[var(--color-violet)]/25"
+            />
+          ) : (
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg font-semibold text-white">{deckTitle}</h1>
+              <button
+                type="button"
+                aria-label="Edit deck title"
+                onClick={() => setIsEditingTitle(true)}
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-white/25 text-white/70 transition hover:border-white/40 hover:text-white"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16.862 4.487l1.651 1.651a2 2 0 010 2.828l-8.21 8.21-3.715.413a1 1 0 01-1.106-1.106l.413-3.715 8.21-8.21a2 2 0 012.828 0z" />
+                </svg>
+              </button>
+            </div>
+          )}
           <div className="mt-1 space-y-1 text-[11px] uppercase tracking-[0.28em] text-slate-300">
             <span className="block">{slideList.length} slides</span>
             <span className="block text-slate-400/80">Synced {formattedSyncedAt}</span>
