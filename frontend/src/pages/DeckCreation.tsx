@@ -12,6 +12,12 @@ export function DeckCreation() {
   const [isCreatingDeck, setIsCreatingDeck] = useState(false)
   const [deckTitle, setDeckTitle] = useState('')
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false)
+  const [deckContext, setDeckContext] = useState({
+    title: '',
+    startupName: '',
+    overview: '',
+  })
   const navigate = useNavigate()
   const createDeck = useMutation(api.decks.createDeck)
 
@@ -43,6 +49,15 @@ export function DeckCreation() {
       createNewDeck()
     }
   }, [])
+
+  const handleStartDeck = () => {
+    setIsOnboardingOpen(true)
+  }
+
+  const handleOnboardingSubmit = (data: typeof deckContext) => {
+    setDeckContext(data)
+    setIsOnboardingOpen(false)
+  }
 
   // Show loading screen while creating deck
   if (!currentDeckId) {
@@ -106,7 +121,11 @@ export function DeckCreation() {
             />
 
             <div className="flex flex-1 gap-5">
-              <DeckCanvas deckId={currentDeckId} activeSlideIndex={activeSlideIndex} />
+              <DeckCanvas
+                deckId={currentDeckId}
+                activeSlideIndex={activeSlideIndex}
+                onStartDeck={handleStartDeck}
+              />
             </div>
           </div>
           <div className="w-[360px] border-l border-white/10 bg-white/80 backdrop-blur-xl">
@@ -114,6 +133,75 @@ export function DeckCreation() {
           </div>
         </div>
       </div>
+      {isOnboardingOpen ? (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-3xl bg-white p-8 shadow-2xl">
+            <h2 className="text-2xl font-semibold text-slate-900">Let’s get your deck started</h2>
+            <p className="mt-2 text-sm text-slate-500">
+              Give us a few details so the copilot can tailor your slides.
+            </p>
+            <form
+              className="mt-6 space-y-5"
+              onSubmit={(event) => {
+                event.preventDefault()
+                const formData = new FormData(event.currentTarget)
+                handleOnboardingSubmit({
+                  title: (formData.get('title') as string) ?? '',
+                  startupName: (formData.get('startupName') as string) ?? '',
+                  overview: (formData.get('overview') as string) ?? '',
+                })
+              }}
+            >
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Deck title</label>
+                <input
+                  name="title"
+                  defaultValue={deckContext.title}
+                  placeholder="Example: Seed Round Pitch"
+                  className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-[var(--color-violet)] focus:outline-none focus:ring-2 focus:ring-[var(--color-violet)]/20"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Startup name</label>
+                <input
+                  name="startupName"
+                  defaultValue={deckContext.startupName}
+                  placeholder="Example: PitchForge"
+                  className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-[var(--color-violet)] focus:outline-none focus:ring-2 focus:ring-[var(--color-violet)]/20"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">Startup overview</label>
+                <textarea
+                  name="overview"
+                  defaultValue={deckContext.overview}
+                  placeholder="Give a short description of your solution, audience, and traction."
+                  rows={4}
+                  className="mt-2 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-[var(--color-violet)] focus:outline-none focus:ring-2 focus:ring-[var(--color-violet)]/20"
+                  required
+                />
+              </div>
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsOnboardingOpen(false)}
+                  className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
+                >
+                  Not now
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-full bg-[var(--color-violet)] px-5 py-2 text-sm font-semibold text-white shadow-[0_18px_45px_rgba(97,81,255,0.35)] transition hover:bg-[var(--color-violet)]/90"
+                >
+                  Continue
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      ) : null}
     </Layout>
   )
 } 
