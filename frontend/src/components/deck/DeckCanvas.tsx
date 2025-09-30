@@ -210,25 +210,7 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0 }: DeckCanvasProps) {
                   )}
                 </div>
               </div>
-            ) : (
-              <div className="mx-auto max-w-2xl text-center">
-                <div className="mx-auto mb-8 flex h-28 w-28 items-center justify-center rounded-[28px] border border-white/30 bg-white/70 shadow-[0_30px_75px_rgba(8,15,31,0.3)]">
-                  <svg className="h-12 w-12 text-[var(--color-violet)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m6-6H6" />
-                  </svg>
-                </div>
-                <h3 className="text-3xl font-bold text-slate-900">Summon your first slide</h3>
-                <p className="mt-3 text-base text-slate-500">
-                  Tap the copilot to generate an opener, or compose your own to kickstart the story.
-                </p>
-                <button className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--color-violet)] px-8 py-3 text-sm font-semibold text-white shadow-[0_20px_55px_rgba(97,81,255,0.4)] transition hover:bg-[var(--color-violet)]/90">
-                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M4 7h16M4 12h16M4 17h16" />
-                  </svg>
-                  Ask AI to create slide
-                </button>
-              </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
