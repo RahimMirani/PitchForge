@@ -212,23 +212,22 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0, onStartDeck }: DeckCa
                 </div>
               </div>
             ) : (
-              <div className="flex h-full flex-col items-center justify-center rounded-[24px] border border-dashed border-white/35 bg-white/70 text-center text-slate-500 shadow-[0_24px_60px_rgba(8,15,31,0.18)]">
-                <div className="rounded-full border border-white/40 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">
-                  No slides yet
+              <div className="flex h-full items-center justify-center">
+                <div className="flex w-full max-w-xl flex-col items-center rounded-3xl border border-dashed border-white/40 bg-white/82 px-10 py-12 text-center text-slate-500 shadow-[0_24px_60px_rgba(8,15,31,0.18)]">
+                  <h3 className="mt-5 text-[28px] font-semibold text-slate-900">Ready to craft your pitch deck?</h3>
+                  <p className="mt-3 max-w-md text-sm text-slate-500">
+                    Share a quick brief with the copilot and we’ll conjure your opening flow—tailored to your startup’s story.
+                  </p>
+                  <button
+                    onClick={onStartDeck}
+                    className="mt-7 inline-flex items-center gap-2 rounded-full bg-[var(--color-violet)] px-8 py-3 text-base font-semibold text-white shadow-[0_26px_60px_rgba(97,81,255,0.38)] transition hover:bg-[var(--color-violet)]/90"
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 6v12m6-6H6" />
+                    </svg>
+                    Get started
+                  </button>
                 </div>
-                <h3 className="mt-4 text-2xl font-semibold text-slate-900">Ready to craft your deck?</h3>
-                <p className="mt-2 max-w-md text-sm text-slate-500">
-                  Kick things off with a tailored brief so the copilot can draft your opening slides.
-                </p>
-                <button
-                  onClick={onStartDeck}
-                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--color-violet)] px-6 py-2.5 text-sm font-semibold text-white shadow-[0_20px_55px_rgba(97,81,255,0.35)] transition hover:bg-[var(--color-violet)]/90"
-                >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M12 6v12m6-6H6" />
-                  </svg>
-                  Get started
-                </button>
               </div>
             )}
           </div>
