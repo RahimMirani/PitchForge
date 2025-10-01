@@ -44,6 +44,23 @@ export const createAuth = (
 export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
-    return authComponent.getAuthUser(ctx);
+    const identity = await ctx.auth.getUserIdentity();
+    const user = await authComponent.getAuthUser(ctx);
+    if (!user && !identity) return null;
+
+    const profile = user?.profile ?? {};
+    const displayName =
+      profile.fullName ||
+      profile.name ||
+      identity?.name ||
+      user?.email ||
+      identity?.email ||
+      'Founder';
+
+    return {
+      id: user?.userId ?? identity?.subject ?? 'unknown',
+      email: user?.email ?? identity?.email ?? '',
+      name: displayName,
+    };
   },
 });

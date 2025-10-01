@@ -21,6 +21,7 @@ export function Dashboard() {
   const navigate = useNavigate()
   const recentConversations = useQuery(api.voiceai.getRecentConversations)
   const decks = useQuery(api.decks.getDecks) as DeckSummary[] | undefined
+  const currentUser = useQuery(api.auth.getCurrentUser)
 
   const handleSignOut = async () => {
     await signOutUser()
@@ -28,6 +29,8 @@ export function Dashboard() {
   }
 
   const handleCreateDeck = () => navigate('/create', { state: { newDeck: true } })
+
+  const userName = currentUser?.name ?? 'Founder'
 
   const renderDeckList = () => {
     if (decks === undefined) {
@@ -99,7 +102,7 @@ export function Dashboard() {
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.3em] text-slate-300">Welcome back</p>
-              <h1 className="mt-3 text-4xl font-semibold text-white">Your pitch HQ</h1>
+              <h1 className="mt-3 text-4xl font-semibold text-white">{userName}'s pitch HQ</h1>
               <p className="mt-3 max-w-xl text-base text-slate-300">
                 Build, rehearse, and ship investor-ready decks in one place. Pick up where you left off or spin up something new.
               </p>
