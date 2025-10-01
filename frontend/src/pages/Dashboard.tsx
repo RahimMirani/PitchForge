@@ -179,20 +179,20 @@ export function Dashboard() {
                   {recentConversations.map((convo: Conversation) => (
                     <div
                       key={convo._id}
-                      className="flex items-center justify-between rounded-lg bg-slate-900/50 px-3 py-2.5"
+                      className="flex items-center justify-between rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur"
                     >
                       <div>
                         <p className="font-medium text-white/90">{convo.firmTag}</p>
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-slate-300">
                           {new Date(convo._creationTime).toLocaleString('en-US', {
-                            month: 'long',
+                            month: 'short',
                             day: 'numeric',
                             hour: 'numeric',
                             minute: '2-digit',
                           })}
                         </p>
                       </div>
-                      <button className="text-xs font-semibold text-slate-300 transition hover:text-white">
+                      <button className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-white/35 hover:bg-white/10">
                         View
                       </button>
                     </div>
