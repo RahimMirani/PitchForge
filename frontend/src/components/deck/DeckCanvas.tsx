@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQuery } from 'convex/react';
-import { api } from '../../../convex/_generated/api';
+import { api } from '../../convexClient';
 
 interface DeckCanvasProps {
   deckId?: string | null;
@@ -30,10 +30,10 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0, onStartDeck }: DeckCa
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const slides = useQuery(api.slides.getSlidesByDeck, { deckId });
+  const slides = useQuery(api.slides.getSlidesByDeck, { deckId }) as Slide[] | undefined;
   const updateSlide = useMutation(api.slides.updateSlide);
   const deleteSlideMutation = useMutation(api.slides.deleteSlide);
-  const slideList = slides ?? [];
+  const slideList: Slide[] = slides ?? [];
   const isLoading = slides === undefined;
   const currentSlide = slideList[activeSlideIndex];
 
@@ -210,7 +210,7 @@ export function DeckCanvas({ deckId, activeSlideIndex = 0, onStartDeck }: DeckCa
                         </span>
                       </div>
                       <div className="space-y-4 text-[16px] leading-relaxed text-slate-700">
-                        {currentSlide.content.split('\n').map((paragraph, index) => (
+                        {currentSlide.content.split('\n').map((paragraph: string, index: number) => (
                           <p key={index} className="relative pl-6">
                             <span className="absolute left-0 top-2 inline-block h-2 w-2 rounded-full bg-[var(--color-violet)]" />
                             {paragraph}
