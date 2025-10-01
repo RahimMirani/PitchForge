@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAction, useQuery } from 'convex/react';
 import { api as generatedApi } from '../../../convex/_generated/api';
-import { api as BackendApi } from '../../../convex/_generated/api';
+import type { api as BackendApi } from '../../../backend/convex/_generated/api';
 
 interface ChatSidebarProps {
   deckId: string | null;
