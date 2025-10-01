@@ -5,7 +5,12 @@ import { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 import { betterAuth } from "better-auth";
 
-const siteUrl = process.env.SITE_URL!;
+const siteUrlEnv = process.env.SITE_URL ?? "";
+const allowedOrigins = siteUrlEnv.split(",").map((origin) => origin.trim()).filter(Boolean);
+if (allowedOrigins.length === 0) {
+  throw new Error("SITE_URL env var is required (use comma to set multiple origins)");
+}
+const [primarySiteUrl, ...otherOrigins] = allowedOrigins;
 const betterAuthSecret = process.env.BETTER_AUTH_SECRET!;
 
 // The component client has methods needed for integrating Convex with Better Auth,
@@ -23,7 +28,7 @@ export const createAuth = (
     logger: {
       disabled: optionsOnly,
     },
-    trustedOrigins: [siteUrl],
+    trustedOrigins: [primarySiteUrl, ...otherOrigins],
     database: authComponent.adapter(ctx),
     // Configure simple, non-verified email/password to get started
     emailAndPassword: {
@@ -32,7 +37,7 @@ export const createAuth = (
     },
     plugins: [
       // The cross domain plugin is required for client side frameworks
-      crossDomain({ siteUrl }),
+      crossDomain({ siteUrl: primarySiteUrl }),
       // The Convex plugin is required for Convex compatibility
       convex(),
     ],
