@@ -1,16 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Layout } from '../components/layout/Layout'
 import { SlideNavigation } from '../components/deck/SlideNavigation'
 import { DeckCanvas } from '../components/deck/DeckCanvas'
 import { ChatSidebar } from '../components/chat/ChatSidebar'
-import { useNavigate } from 'react-router-dom'
-import { useAction, useMutation } from 'convex/react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useAction, useMutation, useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 
 export function DeckCreation() {
   const [currentDeckId, setCurrentDeckId] = useState<string | null>(null)
   const [isCreatingDeck, setIsCreatingDeck] = useState(false)
   const [deckTitle, setDeckTitle] = useState('')
+  const [isTitleDirty, setIsTitleDirty] = useState(false)
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false)
   const [deckContext, setDeckContext] = useState({
@@ -22,48 +23,86 @@ export function DeckCreation() {
   const [isSavingDeck, setIsSavingDeck] = useState(false)
   const [toast, setToast] = useState<{ message: string; tone: 'success' | 'error' } | null>(null)
   const navigate = useNavigate()
+  const location = useLocation()
   const createDeck = useMutation(api.decks.createDeck)
   const updateDeck = useMutation(api.decks.updateDeck)
   const generateDeck = useAction(api.ai.generateDeckFromBrief)
+  const initRef = useRef(false)
+  const [isReady, setIsReady] = useState(false)
 
-  // Create a new deck
-  const createNewDeck = async () => {
-    if (!deckTitle.trim()) {
-      setDeckTitle('My Pitch Deck')
-    }
-    
+  const syncTitleFromServer = useCallback((title: string) => {
+    setDeckTitle(title)
+    setIsTitleDirty(false)
+    setActiveSlideIndex(0)
+  }, [])
+
+  const createNewDeck = async (proposedTitle?: string) => {
+    if (isCreatingDeck) return null
+    const finalTitle = (proposedTitle && proposedTitle.trim()) || 'My Pitch Deck'
+    setDeckTitle(finalTitle)
+    setIsTitleDirty(false)
     setIsCreatingDeck(true)
-    
+
     try {
       const deckId = await createDeck({
-        title: deckTitle.trim() || 'My Pitch Deck',
+        title: finalTitle,
       })
       setCurrentDeckId(deckId)
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('activeDeckId', deckId)
+      }
+      return deckId
     } catch (error) {
       console.error('Failed to create deck:', error)
       setToast({ message: 'Failed to create deck. Please try again.', tone: 'error' })
+      return null
     } finally {
       setIsCreatingDeck(false)
     }
   }
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    const storedId = sessionStorage.getItem('activeDeckId')
-    if (storedId) {
-      setCurrentDeckId(storedId)
-    } else {
-      setDeckTitle('My Startup Pitch')
-      void createNewDeck()
-    }
-  }, [])
+    if (initRef.current || typeof window === 'undefined') return
+    initRef.current = true
+
+    void (async () => {
+      const newDeckRequested = Boolean((location.state as any)?.newDeck)
+
+      if (newDeckRequested) {
+        sessionStorage.removeItem('activeDeckId')
+        setCurrentDeckId(null)
+        setDeckTitle('')
+        setIsTitleDirty(false)
+        setDeckContext({ title: '', startupName: '', overview: '' })
+        setActiveSlideIndex(0)
+        const newId = await createNewDeck('My Startup Pitch')
+        if (newId) {
+          navigate('/create', { replace: true, state: null })
+        }
+        setIsReady(true)
+        return
+      }
+
+      const storedId = sessionStorage.getItem('activeDeckId')
+      if (storedId) {
+        setCurrentDeckId(storedId)
+        setDeckTitle('')
+        setIsTitleDirty(false)
+        setIsReady(true)
+      } else {
+        await createNewDeck('My Startup Pitch')
+        setIsReady(true)
+      }
+    })()
+  }, [location.state, navigate])
 
   useEffect(() => {
+    if (!isReady) return
     if (typeof window === 'undefined') return
     if (currentDeckId) {
       sessionStorage.setItem('activeDeckId', currentDeckId)
     }
-  }, [currentDeckId])
+  }, [currentDeckId, isReady])
 
   const handleStartDeck = () => {
     setIsOnboardingOpen(true)
@@ -81,6 +120,7 @@ export function DeckCreation() {
         title: data.title,
       })
       setDeckTitle(data.title)
+      setIsTitleDirty(false)
 
       await generateDeck({
         deckId: currentDeckId,
@@ -114,6 +154,8 @@ export function DeckCreation() {
         deckId: currentDeckId,
         title: trimmedTitle,
       })
+      setDeckTitle(trimmedTitle)
+      setIsTitleDirty(false)
       setToast({ message: 'Deck saved.', tone: 'success' })
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
@@ -121,6 +163,8 @@ export function DeckCreation() {
         try {
           const newDeckId = await createDeck({ title: trimmedTitle })
           setCurrentDeckId(newDeckId)
+          setDeckTitle(trimmedTitle)
+          setIsTitleDirty(false)
           if (typeof window !== 'undefined') {
             sessionStorage.setItem('activeDeckId', newDeckId)
           }
@@ -143,30 +187,6 @@ export function DeckCreation() {
     const timeout = window.setTimeout(() => setToast(null), 3000)
     return () => window.clearTimeout(timeout)
   }, [toast])
-
-  // Show loading screen while creating deck
-  if (!currentDeckId) {
-    return (
-      <Layout backgroundVariant="aurora">
-        <div className="relative flex h-full items-center justify-center overflow-hidden bg-slate-950">
-          <div className="absolute inset-0">
-            <div className="absolute -top-32 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-violet-500/25 blur-3xl" />
-            <div className="absolute bottom-[-20%] right-[-10%] h-[480px] w-[480px] rounded-full bg-cyan-400/20 blur-3xl" />
-            <div className="absolute top-1/4 left-[-15%] h-[360px] w-[360px] rounded-full bg-indigo-500/15 blur-3xl" />
-          </div>
-          <div className="relative text-center">
-            <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-[32px] border border-white/15 bg-white/10 backdrop-blur">
-              <svg className="h-12 w-12 animate-spin text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </div>
-            <h3 className="text-3xl font-semibold text-white">Setting up your AI studio…</h3>
-            <p className="mt-3 text-sm text-slate-300">We’re preparing your workspace. Hang tight for just a moment.</p>
-          </div>
-        </div>
-      </Layout>
-    )
-  }
 
   return (
     <Layout backgroundVariant="aurora">
@@ -207,7 +227,10 @@ export function DeckCreation() {
               deckTitle={deckTitle || 'Untitled Deck'}
               activeSlideIndex={activeSlideIndex}
               onSlideSelect={setActiveSlideIndex}
-              onRenameDeck={(title) => setDeckTitle(title)}
+              onRenameDeck={(title) => {
+                setDeckTitle(title)
+                setIsTitleDirty(true)
+              }}
             />
 
             <div className="flex flex-1 gap-5 overflow-hidden">
@@ -322,6 +345,33 @@ export function DeckCreation() {
           </div>
         </div>
       ) : null}
+      <DeckMetadataSync
+        deckId={currentDeckId}
+        isTitleDirty={isTitleDirty}
+        onSyncTitle={syncTitleFromServer}
+      />
     </Layout>
   )
+}
+
+type DeckMetadataSyncProps = {
+  deckId: string | null
+  isTitleDirty: boolean
+  onSyncTitle: (title: string) => void
+}
+
+function DeckMetadataSync({ deckId, isTitleDirty, onSyncTitle }: DeckMetadataSyncProps) {
+  if (!deckId) {
+    return null
+  }
+
+  const deck = useQuery(api.decks.getDeckWithSlidesByStringId, { deckId })
+
+  useEffect(() => {
+    if (!isTitleDirty && deck?.title) {
+      onSyncTitle(deck.title)
+    }
+  }, [deck?.title, isTitleDirty, onSyncTitle])
+
+  return null
 } 

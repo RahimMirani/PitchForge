@@ -20,9 +20,17 @@ const suggestedPrompts = [
 ]
 
 export function ChatSidebar({ deckId }: ChatSidebarProps) {
+  if (!deckId) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center bg-white/85 text-slate-400 backdrop-blur-xl">
+        <p className="text-sm">Select a deck to unlock the copilot.</p>
+      </div>
+    )
+  }
+
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const messages = useQuery(api.messages.getMessages, deckId ? { deckId } : undefined);
+  const messages = useQuery(api.messages.getMessages, { deckId });
   const chatWithAI = useAction(api.ai.chatWithAI);
   const messageList = messages ?? [];
   const [queuedPrompt, setQueuedPrompt] = useState<string | null>(null);

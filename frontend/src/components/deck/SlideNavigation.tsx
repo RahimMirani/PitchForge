@@ -19,13 +19,23 @@ interface Slide {
 }
 
 export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSlideSelect, onRenameDeck }: SlideNavigationProps) {
+  if (!deckId) {
+    return (
+      <div className="w-full overflow-hidden rounded-2xl bg-white/6 px-4 py-3 backdrop-blur">
+        <div className="flex h-full items-center justify-center text-sm text-slate-300">
+          Select or create a deck to view slides.
+        </div>
+      </div>
+    )
+  }
+
   const [isCreatingSlide, setIsCreatingSlide] = useState(false);
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [draftTitle, setDraftTitle] = useState(deckTitle);
-  const slides = useQuery(api.slides.getSlidesByDeck, deckId ? { deckId } : undefined);
+  const slides = useQuery(api.slides.getSlidesByDeck, { deckId });
   const createSlide = useMutation(api.slides.createSlide);
-  const isLoading = Boolean(deckId) && slides === undefined;
+  const isLoading = slides === undefined;
   const slideList = slides ?? [];
 
   useEffect(() => {
@@ -41,6 +51,7 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
 
   useEffect(() => {
     setDraftTitle(deckTitle);
+    setIsEditingTitle(false);
   }, [deckTitle]);
 
   const commitTitleChange = (commit: boolean) => {
@@ -58,6 +69,7 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
     }
 
     onRenameDeck?.(trimmed);
+    setDraftTitle(trimmed);
     setIsEditingTitle(false);
   };
 

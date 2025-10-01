@@ -16,15 +16,25 @@ interface Slide {
 }
 
 export function DeckCanvas({ deckId, activeSlideIndex = 0, onStartDeck }: DeckCanvasProps) {
+  if (!deckId) {
+    return (
+      <div className="relative flex h-full w-full flex-col overflow-hidden rounded-[28px] bg-white/88 shadow-[0_30px_80px_rgba(8,15,31,0.35)] backdrop-blur-xl">
+        <div className="flex h-full items-center justify-center text-sm text-slate-400">
+          Select or create a deck to view slide content.
+        </div>
+      </div>
+    )
+  }
+
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const slides = useQuery(api.slides.getSlidesByDeck, deckId ? { deckId } : undefined);
+  const slides = useQuery(api.slides.getSlidesByDeck, { deckId });
   const updateSlide = useMutation(api.slides.updateSlide);
   const deleteSlideMutation = useMutation(api.slides.deleteSlide);
   const slideList = slides ?? [];
-  const isLoading = Boolean(deckId) && slides === undefined;
+  const isLoading = slides === undefined;
   const currentSlide = slideList[activeSlideIndex];
 
   const startEditing = () => {

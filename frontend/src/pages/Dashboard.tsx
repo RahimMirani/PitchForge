@@ -49,7 +49,7 @@ export function Dashboard() {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
-              onClick={() => navigate('/create')}
+              onClick={() => navigate('/create', { state: { newDeck: true } })}
               className="flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold tracking-wide text-slate-950 transition hover:bg-slate-100"
             >
               <span className="text-lg">➕</span>
