@@ -11,6 +11,7 @@
 import type * as ai from "../ai.js";
 import type * as auth from "../auth.js";
 import type * as decks from "../decks.js";
+import type * as firecrawl from "../firecrawl.js";
 import type * as http from "../http.js";
 import type * as messages from "../messages.js";
 import type * as slides from "../slides.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   ai: typeof ai;
   auth: typeof auth;
   decks: typeof decks;
+  firecrawl: typeof firecrawl;
   http: typeof http;
   messages: typeof messages;
   slides: typeof slides;
