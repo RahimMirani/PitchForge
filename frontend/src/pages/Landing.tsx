@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { AuthUI } from '../lib/AuthUI'
 
 const featureHighlights = [
@@ -21,7 +20,6 @@ const featureHighlights = [
 ]
 
 export function Landing() {
-  const navigate = useNavigate()
   const [authOpen, setAuthOpen] = useState(false)
   const [authMode, setAuthMode] = useState<'signIn' | 'signUp'>('signIn')
 

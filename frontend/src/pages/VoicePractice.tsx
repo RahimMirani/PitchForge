@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { cn } from '../lib/utils'
 import { useQuery } from 'convex/react'
-import { api } from '../../convex/_generated/api'
+import { api } from '../convexClient'
 import { VapiSession } from '../components/voice/VapiSession'
 
 type DeckSummary = {
@@ -15,7 +15,7 @@ export function VoicePractice() {
   const [selectedFirmTag, setSelectedFirmTag] = useState<string | null>(null)
   const [selectedDeckOption, setSelectedDeckOption] = useState<string | null>(null)
   const [isSessionActive, setIsSessionActive] = useState(false)
-  const decks = useQuery(api.decks.getDecks)
+  const decks = useQuery(api.decks.getDecks) as DeckSummary[] | undefined
 
   const isButtonDisabled = !selectedFirmTag || !selectedDeckOption
 
