@@ -66,7 +66,21 @@ export function DeckCreation() {
     initRef.current = true
 
     void (async () => {
-      const newDeckRequested = Boolean((location.state as any)?.newDeck)
+      const navState = (location.state as { newDeck?: boolean; deckId?: string } | null) ?? null
+      const requestedDeckId = navState?.deckId
+      const newDeckRequested = Boolean(navState?.newDeck)
+
+      if (requestedDeckId) {
+        sessionStorage.setItem('activeDeckId', requestedDeckId)
+        setCurrentDeckId(requestedDeckId)
+        setDeckTitle('')
+        setIsTitleDirty(false)
+        setDeckContext({ title: '', startupName: '', overview: '' })
+        setActiveSlideIndex(0)
+        navigate('/create', { replace: true, state: null })
+        setIsReady(true)
+        return
+      }
 
       if (newDeckRequested) {
         sessionStorage.removeItem('activeDeckId')
@@ -75,10 +89,8 @@ export function DeckCreation() {
         setIsTitleDirty(false)
         setDeckContext({ title: '', startupName: '', overview: '' })
         setActiveSlideIndex(0)
-        const newId = await createNewDeck('My Startup Pitch')
-        if (newId) {
-          navigate('/create', { replace: true, state: null })
-        }
+        await createNewDeck('My Startup Pitch')
+        navigate('/create', { replace: true, state: null })
         setIsReady(true)
         return
       }
@@ -346,7 +358,7 @@ export function DeckCreation() {
         </div>
       ) : null}
       <DeckMetadataSync
-        deckId={currentDeckId}
+        deckId={isReady ? currentDeckId : null}
         isTitleDirty={isTitleDirty}
         onSyncTitle={syncTitleFromServer}
       />
