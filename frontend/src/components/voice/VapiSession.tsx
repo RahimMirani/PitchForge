@@ -1,7 +1,7 @@
 import Vapi from '@vapi-ai/web';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAction, useMutation } from 'convex/react';
-import { api } from '../../../convex/_generated/api';
+import { api } from '../../convexClient';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -93,11 +93,18 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
           setCallStatus('Error: No config received');
           return;
         }
-        vapi.on('call-start', onCallStartHandler);
-        vapi.on('call-end', onCallEndHandler);
-        vapi.on('message', onMessageHandler);
-        vapi.on('error', onUnexpectedErrorHandler);
-        await vapi.start(config);
+        const client = vapi as unknown as {
+          on: (event: string, handler: (...args: any[]) => void) => void;
+          off?: (event: string, handler: (...args: any[]) => void) => void;
+          start: (config: unknown) => Promise<void>;
+          stop: () => void;
+        };
+
+        client.on('call-start', onCallStartHandler);
+        client.on('call-end', onCallEndHandler);
+        client.on('message', onMessageHandler);
+        client.on('error', onUnexpectedErrorHandler);
+        await client.start(config);
       } catch (error) {
         console.error('Error starting Vapi session:', error);
         setCallStatus('Error');
@@ -106,11 +113,16 @@ export function VapiSession({ onSessionEnd, selectedFirmTag, selectedDeckOption 
     runSession();
     return () => {
       // Bulletproof cleanup
-      vapi.off('call-start', onCallStartHandler);
-      vapi.off('call-end', onCallEndHandler);
-      vapi.off('message', onMessageHandler);
-      vapi.off('error', onUnexpectedErrorHandler);
-      vapi.stop();
+      const client = vapi as unknown as {
+        off?: (event: string, handler: (...args: any[]) => void) => void;
+        stop: () => void;
+      };
+
+      client.off?.('call-start', onCallStartHandler);
+      client.off?.('call-end', onCallEndHandler);
+      client.off?.('message', onMessageHandler);
+      client.off?.('error', onUnexpectedErrorHandler);
+      client.stop();
     };
   }, [getVapiConfig, onCallStartHandler, onCallEndHandler, onMessageHandler, onUnexpectedErrorHandler, vapi]);
 
