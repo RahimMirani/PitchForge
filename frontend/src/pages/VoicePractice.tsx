@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { cn } from '../lib/utils'
 import { useQuery } from 'convex/react'
-import { api } from '../../../backend/convex/_generated/api'
+import { api } from '../../convex/_generated/api'
 import { VapiSession } from '../components/voice/VapiSession'
 
 export function VoicePractice() {

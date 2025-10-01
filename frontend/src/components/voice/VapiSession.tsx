@@ -1,7 +1,7 @@
 import Vapi from '@vapi-ai/web';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAction, useMutation } from 'convex/react';
-import { api } from '../../../../backend/convex/_generated/api';
+import { api } from '../../../convex/_generated/api';
 
 interface Message {
   role: 'user' | 'assistant';
