@@ -2,16 +2,15 @@ import { useNavigate } from 'react-router-dom'
 import { signOutUser } from '../lib/auth-client'
 import { useQuery } from 'convex/react'
 import { api } from '../convexClient'
-import { type Id } from '../../convex/_generated/dataModel'
 
 interface Conversation {
-  _id: Id<'Voiceconversations'>
+  _id: string
   _creationTime: number
   firmTag: string
 }
 
 interface DeckSummary {
-  _id: Id<'decks'>
+  _id: string
   title: string
   createdAt?: number
   updatedAt?: number
