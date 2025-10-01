@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useAction, useQuery } from 'convex/react';
-import { api } from '../../../convex/_generated/api';
+import { api as generatedApi } from '../../../convex/_generated/api';
+import { api as BackendApi } from '../../../convex/_generated/api';
 
 interface ChatSidebarProps {
   deckId: string | null;
 }
 
-interface Message {
+type Message = {
   _id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
-}
+};
+
+const api = generatedApi as unknown as BackendApi;
 
 const suggestedPrompts = [
   'Draft a compelling problem slide with market stats',
@@ -30,9 +33,9 @@ export function ChatSidebar({ deckId }: ChatSidebarProps) {
 
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const messages = useQuery(api.messages.getMessages, { deckId });
+  const messages = useQuery(api.messages.getMessages, { deckId }) as Message[] | undefined;
   const chatWithAI = useAction(api.ai.chatWithAI);
-  const messageList = messages ?? [];
+  const messageList: Message[] = messages ?? [];
   const [queuedPrompt, setQueuedPrompt] = useState<string | null>(null);
 
   useEffect(() => {
