@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAction, useMutation, useQuery } from 'convex/react';
+import { useAction, useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 
 interface ChatSidebarProps {
