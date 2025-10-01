@@ -10,13 +10,80 @@ interface Conversation {
   firmTag: string
 }
 
+interface DeckSummary {
+  _id: Id<'decks'>
+  title: string
+  createdAt?: number
+  updatedAt?: number
+}
+
 export function Dashboard() {
   const navigate = useNavigate()
   const recentConversations = useQuery(api.voiceai.getRecentConversations)
+  const decks = useQuery(api.decks.getDecks) as DeckSummary[] | undefined
 
   const handleSignOut = async () => {
     await signOutUser()
     navigate('/')
+  }
+
+  const handleCreateDeck = () => navigate('/create', { state: { newDeck: true } })
+
+  const renderDeckList = () => {
+    if (decks === undefined) {
+      return (
+        <div className="mt-6 space-y-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={`deck-skeleton-${index}`}
+              className="h-16 animate-pulse rounded-2xl border border-white/10 bg-white/10"
+            />
+          ))}
+        </div>
+      )
+    }
+
+    if (decks.length === 0) {
+      return (
+        <div className="mt-6 flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-white/20 bg-slate-900/40 p-10 text-center">
+          <span className="text-4xl">🗂️</span>
+          <h3 className="text-lg font-semibold text-white">No decks yet</h3>
+          <p className="max-w-sm text-sm text-slate-300">
+            When you generate a new pitch deck, it will appear here with realtime previews and status updates.
+          </p>
+          <button
+            onClick={handleCreateDeck}
+            className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
+          >
+            Create your first deck
+          </button>
+        </div>
+      )
+    }
+
+    return (
+      <div className="mt-6 space-y-3">
+        {decks.map((deck) => (
+          <div
+            key={deck._id}
+            className="flex items-center justify-between rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur"
+          >
+            <div>
+              <p className="text-base font-semibold text-white/90">{deck.title || 'Untitled Deck'}</p>
+              <p className="text-xs text-slate-300">
+                Created {formatTimestamp(deck.createdAt ?? deck.updatedAt ?? 0)} · Updated {formatTimestamp(deck.updatedAt ?? deck.createdAt ?? 0)}
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/create', { state: { deckId: deck._id } })}
+              className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-slate-200 transition hover:border-white/35 hover:bg-white/10"
+            >
+              Open deck
+            </button>
+          </div>
+        ))}
+      </div>
+    )
   }
 
   return (
@@ -49,7 +116,7 @@ export function Dashboard() {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
-              onClick={() => navigate('/create', { state: { newDeck: true } })}
+              onClick={handleCreateDeck}
               className="flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold tracking-wide text-slate-950 transition hover:bg-slate-100"
             >
               <span className="text-lg">➕</span>
@@ -69,24 +136,13 @@ export function Dashboard() {
           <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-white/90">Recent decks</h2>
-              <button className="text-sm text-slate-300 transition hover:text-white" onClick={() => navigate('/create')}>
-                View all
-              </button>
+              {decks && decks.length > 0 && (
+                <button className="text-sm text-slate-300 transition hover:text-white" onClick={handleCreateDeck}>
+                  Start new
+                </button>
+              )}
             </div>
-
-            <div className="mt-6 flex flex-col items-center justify-center gap-4 rounded-3xl border border-dashed border-white/20 bg-slate-900/40 p-10 text-center">
-              <span className="text-4xl">🗂️</span>
-              <h3 className="text-lg font-semibold text-white">No decks yet</h3>
-              <p className="max-w-sm text-sm text-slate-300">
-                When you generate a new pitch deck, it will appear here with realtime previews and status updates.
-              </p>
-              <button
-                onClick={() => navigate('/create')}
-                className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-slate-950 transition hover:bg-slate-100"
-              >
-                Create your first deck
-              </button>
-            </div>
+            {renderDeckList()}
           </div>
 
           <div className="flex h-full flex-col rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
@@ -149,4 +205,14 @@ export function Dashboard() {
       </div>
     </div>
   )
+}
+
+function formatTimestamp(timestamp: number) {
+  if (!timestamp) return '—'
+  return new Date(timestamp).toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 } 
