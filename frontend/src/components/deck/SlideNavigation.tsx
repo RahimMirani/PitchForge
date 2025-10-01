@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery } from 'convex/react';
-import { api } from '../../../convex/_generated/api';
+import { api } from '../../convexClient';
 
 interface SlideNavigationProps {
   deckId?: string | null;
@@ -33,10 +33,10 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [draftTitle, setDraftTitle] = useState(deckTitle);
-  const slides = useQuery(api.slides.getSlidesByDeck, { deckId });
+  const slides = useQuery(api.slides.getSlidesByDeck, { deckId }) as Slide[] | undefined;
   const createSlide = useMutation(api.slides.createSlide);
   const isLoading = slides === undefined;
-  const slideList = slides ?? [];
+  const slideList: Slide[] = slides ?? [];
 
   useEffect(() => {
     if (!deckId) {
@@ -112,7 +112,7 @@ export function SlideNavigation({ deckId, deckTitle, activeSlideIndex = 0, onSli
   const slideTiles = isLoading
     ? renderSkeletons()
     : slideList.length > 0
-      ? slideList.map((slide, index) => {
+      ? slideList.map((slide: Slide, index: number) => {
           const isActive = index === activeSlideIndex
 
           return (
