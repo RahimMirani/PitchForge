@@ -5,7 +5,7 @@ import { DeckCanvas } from '../components/deck/DeckCanvas'
 import { ChatSidebar } from '../components/chat/ChatSidebar'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAction, useMutation, useQuery } from 'convex/react'
-import { api } from '../../convex/_generated/api'
+import { api } from '../convexClient'
 
 export function DeckCreation() {
   const [currentDeckId, setCurrentDeckId] = useState<string | null>(null)
