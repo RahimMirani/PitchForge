@@ -6,8 +6,13 @@ import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react"
 import { authClient } from "./lib/auth-client"
 
-// Initialize Convex client with your deployment URL
-const convex = new ConvexReactClient("https://fastidious-mosquito-435.convex.cloud")
+const siteUrl = import.meta.env.VITE_CONVEX_SITE_URL
+if (!siteUrl) {
+  throw new Error('VITE_CONVEX_SITE_URL must be set to your Convex deployment URL (e.g. https://your-app.convex.site)')
+}
+
+const convexUrl = siteUrl.replace('.convex.site', '.convex.cloud')
+const convex = new ConvexReactClient(convexUrl)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
