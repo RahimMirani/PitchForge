@@ -5,6 +5,11 @@ import { useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { VapiSession } from '../components/voice/VapiSession'
 
+type DeckSummary = {
+  _id: string
+  title: string
+}
+
 export function VoicePractice() {
   const navigate = useNavigate()
   const [selectedFirmTag, setSelectedFirmTag] = useState<string | null>(null)
@@ -129,7 +134,7 @@ export function VoicePractice() {
                       <option value="" disabled>
                         {decks === undefined ? 'Loading decks...' : 'Select a pitch deck'}
                       </option>
-                      {decks?.map((deck) => (
+                      {decks?.map((deck: DeckSummary) => (
                         <option key={deck._id} value={deck._id} className="bg-slate-800 text-white">
                           {deck.title}
                         </option>
