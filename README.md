@@ -1,5 +1,5 @@
 # PitchForge
-Made for Convex Modern Stack Hackathon ()
+Made for Convex Modern Stack Hackathon
 
 PitchForge turns a founder’s raw intake — text or voice — into a VC-ready pitch deck, live insights, and a mock investor practice room. Built for the Convex Modern Stack Hackathon, it showcases how the Convex ecosystem and sponsor tools combine to ship a production-grade, AI-assisted fundraising workflow in days.
 
